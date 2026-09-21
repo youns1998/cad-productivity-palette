@@ -10,12 +10,12 @@ namespace CadProductivityPalette.Services;
 
 public sealed class AutoCadCommandService
 {
-    public void Execute(string commandText, IReadOnlyCollection<ObjectId>? preselection = null)
+    public bool Execute(string commandText, IReadOnlyCollection<ObjectId>? preselection = null)
     {
         Document? document = AcApplication.DocumentManager.MdiActiveDocument;
         if (document is null)
         {
-            return;
+            return false;
         }
 
         try
@@ -27,7 +27,7 @@ public sealed class AutoCadCommandService
             if (preselection is not null && validIds.Length == 0)
             {
                 WriteNotice(document.Editor, "선택 객체가 현재 도면에 없습니다. 객체를 다시 선택해 주세요.");
-                return;
+                return false;
             }
 
             if (validIds.Length > 0)
@@ -37,10 +37,12 @@ public sealed class AutoCadCommandService
 
             string command = commandText.EndsWith('\n') ? commandText : commandText + "\n";
             document.SendStringToExecute(command, true, false, false);
+            return true;
         }
         catch (System.Exception exception)
         {
             WriteError(document.Editor, "명령 실행", exception);
+            return false;
         }
     }
 

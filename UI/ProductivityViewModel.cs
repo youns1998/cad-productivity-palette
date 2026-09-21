@@ -15,9 +15,13 @@ namespace CadProductivityPalette.UI;
 
 public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
 {
+    private static readonly IReadOnlyList<ToolAction> AllCatalogTools =
+        ToolCatalog.Groups.SelectMany(group => group.Tools).ToArray();
+
     private readonly SelectionService _selectionService = new();
     private readonly DrawingStatusService _drawingStatusService = new();
     private readonly AutoCadCommandService _commandService = new();
+    private readonly ToolUsageService _toolUsageService = new();
     private readonly DispatcherTimer _refreshTimer;
     private Document? _subscribedDocument;
     private bool _refreshSelectionPending;
@@ -39,9 +43,12 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     {
         QuickToolGroups = ToolCatalog.AdditionalGroups;
         ExecuteToolCommand = new RelayCommand<ToolAction>(ExecuteTool);
+        ExecuteUsageToolCommand = new RelayCommand<ToolUsageItem>(ExecuteUsageTool);
         ExecuteContextCommand = new RelayCommand<ToolAction>(ExecuteContextAction);
         SelectIssueCommand = new RelayCommand<DrawingIssue>(SelectIssue, issue => issue.CanSelect);
         RefreshCommand = new RelayCommand(RefreshVisible);
+        ClearUsageCommand = new RelayCommand(ClearUsage, () => _toolUsageService.HasUsage);
+        RefreshUsageTools();
 
         _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
         {
@@ -60,17 +67,23 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     public IReadOnlyList<ToolAction> EssentialTools => ToolCatalog.EssentialTools;
     public ObservableCollection<PropertyItem> SelectionProperties { get; } = [];
     public ObservableCollection<ToolAction> ContextActions { get; } = [];
+    public ObservableCollection<ToolUsageItem> RecentTools { get; } = [];
+    public ObservableCollection<ToolUsageItem> FrequentTools { get; } = [];
     public ObservableCollection<DrawingIssue> DrawingIssues { get; } = [];
     public ObservableCollection<DrawingIssue> DrawingNotes { get; } = [];
+    public bool HasRecentTools => RecentTools.Count > 0;
+    public bool HasFrequentTools => FrequentTools.Count > 0;
     public string ReviewSummary => DrawingIssues.Count == 0 ? "아직 점검 결과가 없습니다."
         : DrawingIssues.Any(issue => issue.Count > 0)
             ? $"{DrawingIssues.Count(issue => issue.Count > 0)}개 항목 검토 · 오류 확정이 아닙니다."
             : "검토 대상 없음 · 아래 3개 항목 기준";
 
     public RelayCommand<ToolAction> ExecuteToolCommand { get; }
+    public RelayCommand<ToolUsageItem> ExecuteUsageToolCommand { get; }
     public RelayCommand<ToolAction> ExecuteContextCommand { get; }
     public RelayCommand<DrawingIssue> SelectIssueCommand { get; }
     public RelayCommand RefreshCommand { get; }
+    public RelayCommand ClearUsageCommand { get; }
 
     public string SelectionHeading
     {
@@ -167,7 +180,31 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
 
     private void ExecuteTool(ToolAction tool)
     {
-        _commandService.Execute(tool.CommandText);
+        if (_commandService.Execute(tool.CommandText))
+        {
+            _toolUsageService.Record(tool);
+            RefreshUsageTools();
+        }
+    }
+
+    private void ExecuteUsageTool(ToolUsageItem item)
+    {
+        ExecuteTool(item.Tool);
+    }
+
+    private void ClearUsage()
+    {
+        _toolUsageService.Clear();
+        RefreshUsageTools();
+    }
+
+    private void RefreshUsageTools()
+    {
+        Replace(RecentTools, _toolUsageService.GetRecent(AllCatalogTools));
+        Replace(FrequentTools, _toolUsageService.GetFrequent(AllCatalogTools));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasRecentTools)));
+        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasFrequentTools)));
+        ClearUsageCommand.RaiseCanExecuteChanged();
     }
 
     private void ExecuteContextAction(ToolAction action)

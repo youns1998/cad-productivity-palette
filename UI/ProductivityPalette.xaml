@@ -180,6 +180,21 @@
                 <TextBlock Text="{Binding Name}" TextWrapping="Wrap" />
             </Button>
         </DataTemplate>
+        <DataTemplate x:Key="UsageToolTemplate">
+            <Button Style="{StaticResource ToolButton}" ToolTip="{Binding ToolTip}"
+                    Command="{Binding DataContext.ExecuteUsageToolCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                    CommandParameter="{Binding}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Name}" TextWrapping="Wrap" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="{Binding Meta}" Foreground="{StaticResource MutedBrush}"
+                               FontSize="10" Margin="8,0,0,0" VerticalAlignment="Center" />
+                </Grid>
+            </Button>
+        </DataTemplate>
         <ItemsPanelTemplate x:Key="TwoColumns">
             <UniformGrid Columns="2" />
         </ItemsPanelTemplate>
@@ -264,7 +279,61 @@
                         </Border>
                         <Border Style="{StaticResource Card}">
                             <StackPanel>
-                                <TextBlock Text="자주 쓰는 도구" Style="{StaticResource SectionTitle}" />
+                                <Grid Margin="0,0,0,8">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="스마트 도구" Style="{StaticResource SectionTitle}" Margin="0"
+                                               VerticalAlignment="Center" />
+                                    <Button Grid.Column="1" Content="기록 초기화" Style="{StaticResource ToolButton}"
+                                            Command="{Binding ClearUsageCommand}" MinHeight="26" Padding="8,3" Margin="2,0" />
+                                </Grid>
+                                <TabControl Background="Transparent" BorderThickness="0" Padding="0" Margin="-12,0,-12,-12">
+                                    <TabItem Header="최근 사용" Padding="12,7">
+                                        <Grid Margin="10,8,10,10">
+                                            <TextBlock Text="도구를 실행하면 최근 사용 기록이 표시됩니다."
+                                                       Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="2,5">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding HasRecentTools}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <ItemsControl ItemsSource="{Binding RecentTools}" ItemsPanel="{StaticResource TwoColumns}"
+                                                          ItemTemplate="{StaticResource UsageToolTemplate}" Margin="-2,0" />
+                                        </Grid>
+                                    </TabItem>
+                                    <TabItem Header="자주 사용" Padding="12,7">
+                                        <Grid Margin="10,8,10,10">
+                                            <TextBlock Text="같은 도구를 2회 이상 사용하면 여기에 표시됩니다."
+                                                       Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="2,5">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding HasFrequentTools}" Value="True">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                            <ItemsControl ItemsSource="{Binding FrequentTools}" ItemsPanel="{StaticResource TwoColumns}"
+                                                          ItemTemplate="{StaticResource UsageToolTemplate}" Margin="-2,0" />
+                                        </Grid>
+                                    </TabItem>
+                                </TabControl>
+                            </StackPanel>
+                        </Border>
+                        <Border Style="{StaticResource Card}">
+                            <StackPanel>
+                                <TextBlock Text="기본 도구" Style="{StaticResource SectionTitle}" />
                                 <ItemsControl ItemsSource="{Binding EssentialTools}" ItemsPanel="{StaticResource TwoColumns}"
                                               ItemTemplate="{StaticResource QuickToolTemplate}" Margin="-2,0" />
                             </StackPanel>
