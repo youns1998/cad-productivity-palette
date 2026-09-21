@@ -1,0 +1,10 @@
+bin/
+obj/
+.vscode/
+*.user
+*.suo
+
+# Autodesk runtime assemblies must be resolved from the local AutoCAD install.
+AcMgd.dll
+AcDbMgd.dll
+AcCoreMgd.dll
