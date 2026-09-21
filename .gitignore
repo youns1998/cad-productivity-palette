@@ -1,10 +1,22 @@
 bin/
 obj/
 .vscode/
+.vs/
 *.user
 *.suo
+*.log
+*.dll
+*.exe
 
 # Autodesk runtime assemblies must be resolved from the local AutoCAD install.
 AcMgd.dll
 AcDbMgd.dll
 AcCoreMgd.dll
+
+# Local AutoCAD drawings, backup files, and lock files are not portfolio source.
+*.dwg
+*.dxf
+*.bak
+*.sv$
+*.dwl
+*.dwl2
