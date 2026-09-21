@@ -21,8 +21,14 @@ public sealed class AutoCadCommandService
         try
         {
             ObjectId[] validIds = preselection?
-                .Where(id => id.IsValid && !id.IsErased && id.Database == document.Database)
+                .Where(id => IsUsableId(id, document.Database))
                 .ToArray() ?? [];
+
+            if (preselection is not null && validIds.Length == 0)
+            {
+                WriteNotice(document.Editor, "선택 객체가 현재 도면에 없습니다. 객체를 다시 선택해 주세요.");
+                return;
+            }
 
             if (validIds.Length > 0)
             {
@@ -34,7 +40,7 @@ public sealed class AutoCadCommandService
         }
         catch (System.Exception exception)
         {
-            WriteError(document.Editor, "command", exception);
+            WriteError(document.Editor, "명령 실행", exception);
         }
     }
 
@@ -51,12 +57,20 @@ public sealed class AutoCadCommandService
             using (document.LockDocument())
             using (Transaction transaction = document.Database.TransactionManager.StartTransaction())
             {
-                foreach (ObjectId id in ids.Where(id => id.IsValid && !id.IsErased))
+                int updatedCount = 0;
+                foreach (ObjectId id in ids.Where(id => IsUsableId(id, document.Database)))
                 {
                     if (transaction.GetObject(id, OpenMode.ForWrite, false) is Polyline polyline)
                     {
                         polyline.Closed = !polyline.Closed;
+                        updatedCount++;
                     }
+                }
+
+                if (updatedCount == 0)
+                {
+                    WriteNotice(document.Editor, "현재 도면에서 변경할 폴리라인을 찾지 못했습니다.");
+                    return;
                 }
 
                 transaction.Commit();
@@ -66,15 +80,21 @@ public sealed class AutoCadCommandService
         }
         catch (System.Exception exception)
         {
-            WriteError(document.Editor, "polyline update", exception);
+            WriteError(document.Editor, "폴리라인 변경", exception);
         }
     }
 
     public void EditBlock(ObjectId id)
     {
         Document? document = AcApplication.DocumentManager.MdiActiveDocument;
-        if (document is null || !id.IsValid || id.IsErased)
+        if (document is null)
         {
+            return;
+        }
+
+        if (!IsUsableId(id, document.Database))
+        {
+            WriteNotice(document.Editor, "블록 선택이 현재 도면과 일치하지 않습니다. 블록을 다시 선택해 주세요.");
             return;
         }
 
@@ -100,7 +120,7 @@ public sealed class AutoCadCommandService
         }
         catch (System.Exception exception)
         {
-            WriteError(document.Editor, "block edit", exception);
+            WriteError(document.Editor, "블록 편집", exception);
         }
     }
 
@@ -113,10 +133,11 @@ public sealed class AutoCadCommandService
         }
 
         ObjectId[] ids = issue.ObjectIds
-            .Where(id => id.IsValid && !id.IsErased && id.Database == document.Database)
+            .Where(id => IsUsableId(id, document.Database))
             .ToArray();
         if (ids.Length == 0)
         {
+            WriteNotice(document.Editor, "선택할 객체가 현재 도면에 없습니다. 도면 점검을 다시 실행해 주세요.");
             return;
         }
 
@@ -131,7 +152,7 @@ public sealed class AutoCadCommandService
         }
         catch (System.Exception exception)
         {
-            WriteError(document.Editor, "selection zoom", exception);
+            WriteError(document.Editor, "선택 객체 줌", exception);
         }
     }
 
@@ -205,6 +226,16 @@ public sealed class AutoCadCommandService
 
     private static void WriteError(Editor editor, string operation, System.Exception exception)
     {
-        editor.WriteMessage($"\n[CAD Productivity Palette] Unable to run {operation}: {exception.Message}");
+        editor.WriteMessage($"\n[CAD Productivity Palette] {operation} 처리 실패: {exception.Message}");
+    }
+
+    private static void WriteNotice(Editor editor, string message)
+    {
+        editor.WriteMessage($"\n[CAD Productivity Palette] {message}");
+    }
+
+    private static bool IsUsableId(ObjectId id, Database database)
+    {
+        return !id.IsNull && id.IsValid && !id.IsErased && id.Database == database;
     }
 }

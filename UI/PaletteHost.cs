@@ -17,11 +17,9 @@ public static class PaletteHost
             return;
         }
 
-        _paletteSet.Visible = !_paletteSet.Visible;
-        if (_paletteSet.Visible)
-        {
-            _view?.Refresh();
-        }
+        bool show = !_paletteSet.Visible;
+        _paletteSet.Visible = show;
+        _view?.SetActive(show);
     }
 
     public static void Shutdown()

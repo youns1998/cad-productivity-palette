@@ -23,7 +23,7 @@ public sealed class SelectionService
             }
 
             ObjectId[] ids = result.Value.GetObjectIds()
-                .Where(id => id.IsValid && !id.IsErased)
+                .Where(id => !id.IsNull && id.IsValid && !id.IsErased && id.Database == document.Database)
                 .ToArray();
             if (ids.Length == 0)
             {
@@ -83,7 +83,7 @@ public sealed class SelectionService
         }
         catch (System.Exception exception)
         {
-            document.Editor.WriteMessage($"\n[CAD Productivity Palette] Selection read failed: {exception.Message}");
+            document.Editor.WriteMessage($"\n[CAD Productivity Palette] 선택 정보 읽기 실패: {exception.Message}");
             return SelectionInfo.Empty;
         }
     }
@@ -173,6 +173,11 @@ public sealed class SelectionService
         if (entity.Color.IsByBlock)
         {
             return "ByBlock";
+        }
+
+        if (entity.Color.ColorMethod == Autodesk.AutoCAD.Colors.ColorMethod.ByColor)
+        {
+            return $"RGB {entity.Color.Red}, {entity.Color.Green}, {entity.Color.Blue}";
         }
 
         return $"ACI {entity.ColorIndex}";

@@ -1,3 +1,4 @@
+using System.Windows;
 using System.Windows.Controls;
 
 namespace CadProductivityPalette.UI;
@@ -11,16 +12,23 @@ public partial class ProductivityPalette : UserControl, IDisposable
         InitializeComponent();
         _viewModel = new ProductivityViewModel();
         DataContext = _viewModel;
+        IsVisibleChanged += OnIsVisibleChanged;
     }
 
-    public void Refresh()
+    public void SetActive(bool active)
     {
-        _viewModel.RefreshAll();
+        _viewModel.SetActive(active);
     }
 
     public void Dispose()
     {
+        IsVisibleChanged -= OnIsVisibleChanged;
         _viewModel.Dispose();
         DataContext = null;
+    }
+
+    private void OnIsVisibleChanged(object sender, DependencyPropertyChangedEventArgs eventArgs)
+    {
+        _viewModel.SetActive(IsVisible);
     }
 }

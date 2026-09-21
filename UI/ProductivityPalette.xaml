@@ -225,7 +225,8 @@
                 <TextBlock Text="선택한 객체부터, 필요한 도구까지" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,0" />
             </StackPanel>
         </Border>
-        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0">
+        <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0"
+                    SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
             <TabItem Header="작업 도구">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="0,10,0,4">

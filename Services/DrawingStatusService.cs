@@ -97,7 +97,7 @@ public sealed class DrawingStatusService
         }
         catch (System.Exception exception)
         {
-            document.Editor.WriteMessage($"\n[CAD Productivity Palette] Drawing analysis failed: {exception.Message}");
+            document.Editor.WriteMessage($"\n[CAD Productivity Palette] 도면 점검 실패: {exception.Message}");
             return DrawingStatus.Empty;
         }
     }

@@ -31,6 +31,8 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     private string _lastRefresh = "점검 대기";
     private ObjectId[] _selectionIds = [];
     private SelectionKind _selectionKind;
+    private int _selectedTabIndex;
+    private bool _isActive;
     private bool _disposed;
 
     public ProductivityViewModel()
@@ -39,7 +41,7 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
         ExecuteToolCommand = new RelayCommand<ToolAction>(ExecuteTool);
         ExecuteContextCommand = new RelayCommand<ToolAction>(ExecuteContextAction);
         SelectIssueCommand = new RelayCommand<DrawingIssue>(SelectIssue, issue => issue.CanSelect);
-        RefreshCommand = new RelayCommand(RefreshAll);
+        RefreshCommand = new RelayCommand(RefreshVisible);
 
         _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
         {
@@ -50,7 +52,6 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
         AcApplication.DocumentManager.DocumentActivated += OnDocumentActivated;
         AcApplication.DocumentManager.DocumentToBeDestroyed += OnDocumentToBeDestroyed;
         AttachDocument(AcApplication.DocumentManager.MdiActiveDocument);
-        RefreshAll();
     }
 
     public event PropertyChangedEventHandler? PropertyChanged;
@@ -113,9 +114,40 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
         private set => SetField(ref _lastRefresh, value);
     }
 
-    public void RefreshAll()
+    public int SelectedTabIndex
     {
-        ScheduleRefresh(selection: true, status: true);
+        get => _selectedTabIndex;
+        set
+        {
+            if (SetField(ref _selectedTabIndex, value) && _isActive)
+            {
+                ScheduleRefresh(selection: value == 0, status: value == 1);
+            }
+        }
+    }
+
+    private void RefreshVisible()
+    {
+        ScheduleRefresh(selection: SelectedTabIndex == 0, status: SelectedTabIndex == 1);
+    }
+
+    public void SetActive(bool active)
+    {
+        if (_disposed || _isActive == active)
+        {
+            return;
+        }
+
+        _isActive = active;
+        if (_isActive)
+        {
+            ScheduleRefresh(selection: SelectedTabIndex == 0, status: SelectedTabIndex == 1);
+            return;
+        }
+
+        _refreshTimer.Stop();
+        _refreshSelectionPending = false;
+        _refreshStatusPending = false;
     }
 
     public void Dispose()
@@ -144,7 +176,7 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
         {
             case "toggle-polyline":
                 _commandService.TogglePolylineClosed(_selectionIds);
-                RefreshAll();
+                RefreshVisible();
                 break;
             case "edit-block" when _selectionIds.Length > 0:
                 _commandService.EditBlock(_selectionIds[0]);
@@ -163,7 +195,7 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     private void OnDocumentActivated(object sender, DocumentCollectionEventArgs eventArgs)
     {
         AttachDocument(eventArgs.Document);
-        RefreshAll();
+        RefreshVisible();
     }
 
     private void OnDocumentToBeDestroyed(object sender, DocumentCollectionEventArgs eventArgs)
@@ -211,17 +243,17 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
 
     private void OnImpliedSelectionChanged(object? sender, EventArgs eventArgs)
     {
-        ScheduleRefresh(selection: true, status: false);
+        ScheduleRefresh(selection: SelectedTabIndex == 0, status: false);
     }
 
     private void OnCommandFinished(object sender, CommandEventArgs eventArgs)
     {
-        ScheduleRefresh(selection: true, status: true);
+        ScheduleRefresh(selection: SelectedTabIndex == 0, status: SelectedTabIndex == 1);
     }
 
     private void ScheduleRefresh(bool selection, bool status)
     {
-        if (_disposed)
+        if (_disposed || !_isActive)
         {
             return;
         }
