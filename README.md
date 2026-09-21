@@ -1,165 +1,205 @@
-# CAD Productivity Palette
+# CAD 생산성 도구
 
-AutoCAD에서 반복적으로 쓰는 명령, 현재 선택 객체의 정보와 후속 작업, 도면 상태 점검을 하나의 도킹 팔레트에 모은 생산성 도구입니다. 실무에서 계속 열어 두고 사용하는 흐름을 목표로 하며, 화면에 보이는 작업은 AutoCAD 명령 또는 .NET API 동작에 연결했습니다.
+> AutoCAD에서 선택 객체 확인, 반복 명령 실행, 도면 상태 점검을 하나의 도킹 Palette로 처리하는 실무형 플러그인입니다.
 
-## 해결하려는 문제
+![AutoCAD](https://img.shields.io/badge/AutoCAD-2026.1.1-E51050?logo=autodesk&logoColor=white)
+![.NET](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet&logoColor=white)
+![UI](https://img.shields.io/badge/UI-WPF-0078D4?logo=windows&logoColor=white)
+![Release build](https://img.shields.io/badge/Release_build-verified-2EA44F)
 
-도면 편집 중에는 리본 탭과 명령 이름을 계속 오가게 되고, 선택 객체의 핵심 속성이나 도면 정리 상태를 확인하려면 여러 창과 명령을 반복해서 열어야 합니다. 이 플러그인은 다음 작업 흐름을 한곳으로 줄입니다.
+리본 탭과 명령 이름을 반복해서 오가는 시간을 줄이는 것이 목표입니다. 자주 쓰는 CAD 용어는 영어로 유지하고, 설명·상태·진단 문구는 한국어로 표시합니다.
 
-- 자주 쓰는 작성·수정·주석·레이어·블록·측정 명령 실행
-- 현재 선택 객체의 종류와 핵심 속성 확인
-- 객체 종류에 맞는 편집 작업 바로 실행
+## 핵심 기능
+
+- 선택한 객체의 종류와 주요 속성을 즉시 표시
+- 객체 종류에 맞는 편집 작업 제공
+- 최근 사용 및 사용 빈도에 따라 도구 자동 정렬
+- Palette 버튼, 명령행, 단축키 사용을 동일하게 집계
+- 36개 Quick Tool을 목적별 그룹으로 제공
 - 열린 Polyline, ByLayer가 아닌 색상, 빈 Text 등 도면 상태 점검
-- 문제가 있는 객체를 선택하고 해당 범위로 줌
+- 점검 대상 객체를 선택하고 해당 범위로 Zoom
+- 처음 사용자를 위한 심플 모드와 전체 모드 지원
 
-## 환경
+## 화면 구성
 
-- AutoCAD 2026.1.1
-- .NET 8 / `net8.0-windows`
-- C# / WPF
-- Autodesk AutoCAD .NET API (`AcMgd`, `AcDbMgd`, `AcCoreMgd`)
+```text
+CAD 생산성 도구
+├─ 작업 도구
+│  ├─ 선택 객체
+│  │  ├─ 주요 속성
+│  │  └─ 객체 전용 편집
+│  ├─ 스마트 도구
+│  │  ├─ 최근 사용
+│  │  └─ 자주 사용
+│  ├─ 기본 도구          ← 심플 모드
+│  └─ 모든 도구          ← 전체 모드, 6개 접이식 그룹
+└─ 도면 점검             ← 전체 모드
+   ├─ 검토 항목
+   ├─ 현재 도면 정보
+   └─ Layer / Block 참고 정보
+```
 
-NuGet 패키지를 추가하지 않았습니다. Autodesk DLL은 저장소에 복사하지 않고 로컬 AutoCAD 설치 폴더를 `Private=false`로 참조합니다.
+### 심플 모드와 전체 모드
 
-## 주요 기능
+| 구분 | 심플 모드 `ON` | 심플 모드 `OFF` |
+|---|---|---|
+| 기본 상태 | 최초 실행 시 기본값 | 사용자가 전환 |
+| 선택 객체 정보 | 표시 | 표시 |
+| 최근·자주 사용 | 표시 | 표시 |
+| 명령 도구 | 기본 도구 8개 | 모든 도구 36개 |
+| 도면 점검 | 숨김 | 표시 |
 
-### 화면 구성과 기능 정리
+선택한 모드는 다음 실행에도 유지됩니다. 전체 모드에서는 기본 도구와 추가 도구를 중복 배치하지 않고 **모든 도구** 한 영역으로 통합했습니다.
 
-- **작업 도구 탭:** 선택 객체 정보를 맨 위에 표시하고 실제 사용 기록에 따라 정렬되는 스마트 도구를 이어서 배치합니다. 모드에 따라 기본 도구 또는 모든 도구가 그 아래에 표시됩니다.
-- **심플 모드:** 처음 실행할 때 기본으로 켜지며 선택 객체 정보, 최근·자주 사용한 스마트 도구와 기본 도구 8개를 표시합니다.
-- **스마트 도구:** 최근 실행한 도구 6개와 2회 이상 실행한 도구 중 사용 횟수가 많은 6개를 별도 탭으로 보여 줍니다.
-- **기본 도구:** Line, Polyline, Move, Copy, Offset, Trim, MText, Dimension. 사용 기록이 없어도 항상 같은 위치에서 실행할 수 있습니다.
-- **전체 모드:** 상단 심플 모드 토글을 끄면 기본 도구와 추가 도구의 중복을 없앤 **모든 도구** 36개가 6개 접이식 그룹으로 표시되고 도면 점검 탭이 나타납니다.
-- **선택 객체 액션:** 객체 전용 편집만 강조합니다. 반복되던 Move/Copy/Offset/Match Props/Explode 버튼과 다중 선택 Erase 버튼을 컨텍스트에서 제거했습니다. 공통 편집은 Quick Tools에서 실행합니다.
-- **도면 점검 탭:** 검토 항목 3개를 우선 표시하고, 스타일·객체 수와 Layer·Block 참고 정보는 접어서 표시합니다.
-- **표기 원칙:** Offset·Trim·Polyline·Layer·ByLayer처럼 AutoCAD에서 그대로 사용하는 핵심 용어는 유지하고, 그룹·설명·상태는 한국어로 표시합니다. `ByLayer가 아닌 색상`, `미사용 Block`처럼 혼합 표기를 사용합니다.
-- **가독성:** 동작 가능한 항목에만 선택 + 줌 버튼이 나타나며, 0건 결과와 참고 정보도 흐려지지 않습니다.
+### 색상 의미
 
-### Quick Tools
+| 표현 | 의미 |
+|---|---|
+| 진한 회색 버튼 | 일반 AutoCAD 명령 실행 |
+| 파란색 버튼 | 현재 선택 객체에만 적용되는 편집 작업 |
+| 파란색 밑줄 | 현재 선택한 Tab |
+| 초록색 토글 | 심플 모드 `ON` |
+| 황갈색 `검토` Badge | 확인이 필요한 후보가 있음 |
+| 회색 `참고` Badge | 오류가 아닌 도면 참고 정보 |
+| 초록색 `없음` Badge | 해당 검토 대상이 없음 |
 
-명령은 사용 목적별로 접을 수 있는 그룹에 배치했습니다. 버튼은 언어 독립적인 AutoCAD 명령 형식(`_.COMMAND`)을 사용합니다.
+점검 결과는 오류를 단정하지 않습니다. 예를 들어 열린 Polyline이나 직접 지정한 색상은 의도된 설계일 수 있습니다.
 
-- **그리기:** LINE, PLINE, RECTANG, CIRCLE
-- **수정:** OFFSET, TRIM, EXTEND, FILLET, CHAMFER, JOIN, COPY, MOVE, ROTATE, MIRROR, SCALE, STRETCH, ALIGN, MATCHPROP
-- **주석:** HATCH, TEXT, MTEXT, DIM, DIMLINEAR, DIMALIGNED
-- **Layer:** LAYISO, LAYUNISO, LAYOFF, LAYON
-- **Block:** BLOCK, INSERT, BEDIT, EXPLODE
-- **측정 · 정리:** DIST, AREA, PURGE, ZOOM EXTENTS
+## Quick Tools
 
-버튼은 명령을 시작하며, 이후 점 지정과 옵션 입력은 평소 AutoCAD 명령처럼 명령행과 도면 화면에서 계속합니다.
+도구 이름은 AutoCAD에서 익숙한 용어를 유지하며, Tooltip은 한국어로 설명합니다. 실제 실행에는 언어 독립 명령 형식인 `_.COMMAND`를 사용합니다.
 
-### 도구 사용 기록
+| 그룹 | 도구 |
+|---|---|
+| 그리기 | Line, Polyline, Rectangle, Circle |
+| 수정 | Move, Copy, Offset, Trim, Extend, Fillet, Chamfer, Join, Rotate, Mirror, Scale, Stretch, Align, Match Props |
+| 주석 | Hatch, Text, MText, Dimension, Linear Dim, Aligned Dim |
+| Layer | Layer Isolate, Layer 복원, Layer 끄기, 모든 Layer 켜기 |
+| Block | Block 생성, Insert, Block 편집, Explode |
+| 측정 · 정리 | Distance, Area, Purge, Zoom Extents |
 
-- Quick Tools의 36개 도구만 기록하며 선택 객체 전용 액션은 집계하지 않습니다.
-- **최근 사용**은 마지막으로 실행한 서로 다른 도구를 최대 6개까지 시간순으로 표시합니다.
-- **자주 사용**은 2회 이상 실행한 도구를 횟수순으로 최대 6개까지 표시합니다.
-- Palette 버튼뿐 아니라 AutoCAD 명령행과 단축키로 직접 실행한 명령도 집계합니다.
-- 명령이 정상적으로 완료된 경우에만 횟수를 올리며 취소하거나 실패한 명령은 집계하지 않습니다.
-- 사용 기록은 플러그인을 `NETLOAD`한 뒤부터 팔레트 표시 여부와 관계없이 집계합니다.
-- 기록은 `%LOCALAPPDATA%\CadProductivityPalette\tool-usage.json`에 사용자별로 저장되며 저장소나 다른 PC에 공유되지 않습니다.
-- 스마트 도구의 **기록 초기화** 버튼으로 언제든 비울 수 있습니다.
+버튼은 명령을 시작하는 역할만 합니다. 점 지정과 세부 Option 입력은 일반 AutoCAD 명령처럼 명령행과 도면 화면에서 계속합니다.
 
-심플 모드 선택은 `%LOCALAPPDATA%\CadProductivityPalette\user-settings.json`에 저장되므로 다음 AutoCAD 실행에도 유지됩니다. 설정 파일이 아직 없거나 읽을 수 없으면 심플 모드로 시작합니다.
+## 스마트 도구와 사용 기록
 
-### Selection Context
+- **최근 사용:** 마지막으로 완료한 서로 다른 도구를 최대 6개 표시
+- **자주 사용:** 2회 이상 완료한 도구를 횟수순으로 최대 6개 표시
+- Palette 버튼뿐 아니라 명령행과 단축키로 실행한 대상 명령도 집계
+- 정상 완료된 명령만 기록하고 취소·실패한 명령은 제외
+- `NETLOAD` 이후에는 Palette가 닫혀 있어도 계속 집계
+- **기록 초기화** 버튼으로 언제든 사용 기록 삭제 가능
+
+집계 대상은 Quick Tools에 등록된 36개 명령입니다. 선택 객체 전용 작업은 사용 빈도에 포함하지 않습니다.
+
+## 선택 객체 정보
 
 AutoCAD의 implied selection이 바뀌면 다음 정보를 갱신합니다.
 
-- 공통: 객체 종류, 레이어, 색상(ByLayer/ByBlock/ACI)
-- Polyline: 길이, 면적, 열림/닫힘 및 Close/Open·Polyline Edit 작업
-- Line: 길이
-- Text/MText: 내용, 높이, 문자 스타일 및 Text Edit 작업
-- Block Reference: 블록 이름, 속성 유무 및 BEDIT 작업
-- Hatch: 패턴, 축척 및 Hatch Edit 작업
-- Dimension: 치수 스타일, 측정값 및 DIMEDIT 작업
-- Circle: 반지름, 지름, 면적
-- Arc: 반지름, 길이
-- 다중 선택: 객체 수, 공통 레이어/종류
+| 객체 | 표시 정보와 전용 작업 |
+|---|---|
+| 공통 | 종류, Layer, 색상(ByLayer/ByBlock/ACI/RGB) |
+| Polyline | 길이, 면적, 열림/닫힘, 닫기/열기, Polyline 편집 |
+| Line | 길이 |
+| Text / MText | 내용, 높이, Text Style, Text 편집 |
+| Block 참조 | Block 이름, 속성 유무, Block 편집 |
+| Hatch | Hatch Pattern, 축척, Hatch 편집 |
+| Dimension | Dimension Style, 측정값, Dimension 편집 |
+| Circle | 반지름, 지름, 면적 |
+| Arc | 반지름, 길이 |
+| 다중 선택 | 객체 수, 공통 Layer 또는 객체 종류 |
 
-Polyline의 **닫기 / 열기**는 문서를 잠근 뒤 짧은 쓰기 트랜잭션으로 `Closed` 속성을 직접 변경합니다. **Polyline 편집**은 PEDIT를 시작하며 Join 등 옵션은 사용자가 지정합니다. 나머지 작업은 AutoCAD 기본 명령에 연결되어 있으며 명령별 프롬프트에 따라 대상이나 옵션을 추가로 지정할 수 있습니다.
+Polyline의 **닫기 / 열기**만 짧은 쓰기 Transaction으로 `Closed` 속성을 직접 변경합니다. 나머지 편집 버튼은 AutoCAD 기본 명령에 연결됩니다.
 
-### Drawing Status
+## 도면 점검
 
-현재 Model Space를 읽기 전용 트랜잭션으로 분석합니다.
+현재 Model Space를 읽기 전용 Transaction으로 분석합니다.
 
-- 현재 레이어, 문자 스타일, 치수 스타일
-- Model Space 객체 수
-- 열린 Polyline
-- ByLayer가 아닌 색상을 가진 객체
-- 빈 Text/MText
-- Layer 0에 놓인 객체
-- 미사용 일반 Block 정의
-- 잠긴 Layer
+| 분류 | 점검 항목 | 선택 + Zoom |
+|---|---|:---:|
+| 검토 | 열린 Polyline | 지원 |
+| 검토 | ByLayer가 아닌 색상 | 지원 |
+| 검토 | 빈 Text / MText | 지원 |
+| 참고 | Layer 0 사용 | 지원 |
+| 참고 | 미사용 일반 Block 정의 | 미지원 |
+| 참고 | 잠긴 Layer | 미지원 |
 
-열린 Polyline·ByLayer가 아닌 색상·빈 Text를 검토 항목으로 표시합니다. 건수가 있는 항목의 **선택 + 줌** 버튼을 누르면 해당 객체를 선택하고 객체 extents에 맞춰 현재 뷰를 이동합니다. 0건은 `없음`으로 표시합니다. 열린 Polyline이나 직접 지정한 색상이 곧 오류를 뜻하지는 않습니다.
+현재 Layer, Text Style, Dimension Style과 Model Space 객체 수도 함께 표시합니다. 미사용 정의의 실제 제거는 AutoCAD `Purge`에서 사용자가 확인하도록 하며, 점검 기능이 도면을 자동 수정하지는 않습니다.
 
-Layer 0 사용·미사용 Block·잠긴 Layer는 **참고 정보**에 표시합니다. Layer 0 객체는 선택 + 줌을 지원하고 나머지는 숫자만 표시합니다. 기존 미사용 Layer/Text Style 집계는 Model Space만 읽어 오판할 수 있어 제거했습니다. 정의 정리는 AutoCAD Purge에서 직접 검토합니다.
+## 설치 및 실행
 
-## 안전성과 이벤트 처리
+### 요구 환경
 
-- 활성 문서가 바뀌면 이전 문서 이벤트를 해제하고 새 문서에 연결합니다.
-- 문서 종료 시 이벤트와 화면 상태를 정리합니다.
-- 선택/명령 이벤트는 180ms 동안 모아 한 번만 갱신합니다.
-- 현재 보이는 탭만 갱신하고, 팔레트가 숨겨지면 선택·도면 분석을 중지합니다.
-- AutoCAD 명령 실행 중에는 데이터베이스 분석을 미루어 중첩 트랜잭션을 피합니다.
-- 삭제된 ObjectId와 다른 문서의 ObjectId는 조회·명령·직접 수정·줌 실행 전에 제외합니다.
-- 예외는 AutoCAD 명령행에 `[CAD 생산성 도구]` 접두어로 간단히 출력합니다.
-- 진단 기능은 도면을 자동 수정하지 않습니다.
+- Windows
+- AutoCAD 2026.1.1
+- .NET 8 SDK
+- C# / WPF
+- Autodesk AutoCAD .NET API (`AcMgd`, `AcDbMgd`, `AcCoreMgd`)
 
-## 빌드
+Autodesk Runtime DLL은 저장소에 포함하지 않습니다. 프로젝트는 기본 AutoCAD 설치 경로의 DLL을 `Private=false`로 참조합니다.
 
-AutoCAD 2026이 기본 경로에 설치되어 있어야 합니다.
-
-```powershell
-dotnet clean
-dotnet build
-```
-
-기존 Debug DLL이 AutoCAD에 로드되어 파일이 잠긴 경우에는 실행 중인 AutoCAD를 유지한 채 별도 Release 산출물을 만들 수 있습니다.
+### 빌드
 
 ```powershell
+git clone https://github.com/youns1998/cad-productivity-palette.git
+cd cad-productivity-palette
 dotnet build -c Release
 ```
 
-Release 결과: `bin\Release\net8.0-windows\CadProductivityPalette.dll`. 새 버전 적용은 도면을 저장한 뒤 AutoCAD를 재시작하고 해당 DLL을 NETLOAD합니다.
-
-참조 경로가 다른 환경에서는 `CadProductivityPalette.csproj`의 세 `HintPath`만 설치 위치에 맞게 수정합니다. 빌드 결과는 다음 경로에 생성됩니다.
+결과 파일:
 
 ```text
-bin\Debug\net8.0-windows\CadProductivityPalette.dll
+bin\Release\net8.0-windows\CadProductivityPalette.dll
 ```
 
-## AutoCAD에서 실행
+AutoCAD 설치 경로가 다르면 [CadProductivityPalette.csproj](CadProductivityPalette.csproj)의 `HintPath` 세 곳을 수정합니다.
 
-1. AutoCAD 2026.1.1을 실행합니다.
-2. 명령행에 `NETLOAD`를 입력합니다.
-3. 빌드된 `CadProductivityPalette.dll`을 선택합니다.
-4. 명령행에 `CADTOOLS`를 입력합니다.
-5. 같은 명령을 다시 입력하면 팔레트가 닫히고, 다시 입력하면 열립니다.
+### AutoCAD에서 실행
 
-AutoCAD의 보안 정책에 따라 DLL 폴더를 `TRUSTEDPATHS`에 추가해야 할 수 있습니다.
+1. AutoCAD 명령행에서 `NETLOAD`를 실행합니다.
+2. 빌드한 `CadProductivityPalette.dll`을 선택합니다.
+3. `CADTOOLS`를 입력해 Palette를 엽니다.
+4. `CADTOOLS`를 다시 입력하면 Palette가 닫히며, 한 번 더 입력하면 다시 열립니다.
+
+환경에 따라 DLL 폴더를 AutoCAD `TRUSTEDPATHS`에 추가해야 할 수 있습니다. 새 DLL 적용 전에는 도면을 저장하고 AutoCAD를 재시작하는 것이 안전합니다.
+
+## 로컬 저장 데이터
+
+| 파일 | 내용 |
+|---|---|
+| `%LOCALAPPDATA%\CadProductivityPalette\tool-usage.json` | 최근 사용 시각과 누적 횟수 |
+| `%LOCALAPPDATA%\CadProductivityPalette\user-settings.json` | 심플 모드 선택 상태 |
+
+두 파일은 사용자 PC에만 저장되며 Git 저장소나 다른 PC에 공유되지 않습니다. 파일이 없거나 읽을 수 없을 때는 빈 사용 기록과 심플 모드로 안전하게 시작합니다.
+
+## 안전성과 성능
+
+- 문서 전환 시 이전 문서 Event를 해제하고 활성 문서에 다시 연결
+- 문서 종료 시 Event와 화면 상태 정리
+- 선택·명령 Event를 180ms 동안 모아 중복 갱신 방지
+- 현재 보이는 Tab만 갱신하고 숨겨진 Palette에서는 도면 분석 중지
+- AutoCAD 명령 실행 중 Database 분석을 미뤄 중첩 Transaction 방지
+- 삭제되었거나 다른 문서에 속한 `ObjectId`를 작업 전에 제외
+- 예외를 AutoCAD 명령행에 `[CAD 생산성 도구]` 접두어로 출력
+- 대형 도면의 전체 Model Space 분석은 도면 점검 화면이 필요할 때만 실행
 
 ## 프로젝트 구조
 
 ```text
-Commands/   CADTOOLS 진입 명령
-Models/     선택 정보, 도면 상태, 도구 정의
-Services/   명령 실행, 선택 분석, 도면 진단
-UI/         PaletteSet 호스트, WPF 화면, ViewModel
-Utils/      WPF ICommand 구현
-Properties/ AutoCAD 확장/명령 어셈블리 등록
+Commands/       CADTOOLS 진입 명령
+Models/         선택 정보, 도면 상태, 도구 정의
+Services/       명령 실행, 사용 기록, 선택 분석, 도면 점검
+UI/             PaletteSet Host, WPF 화면, ViewModel
+Utils/          WPF ICommand 구현
+Properties/     AutoCAD 확장 및 명령 Assembly 등록
 ```
 
-## 현재 구현 범위와 확인 사항
+## 검증 상태
 
-초기 버전은 `dotnet clean`/`dotnet build`로 검증했습니다. UI 정리 버전은 기존 DLL이 실행 중인 AutoCAD에 잠겨 있어 Release 빌드로 검증했습니다. AutoCAD를 로드하지 않는 별도 WPF 미리보기에서 320px/370px 폭, 심플/전체 모드 전환, 두 메인 탭과 스마트 도구 탭, 그룹 펼치기/접기, 선택 없음, 데이터 바인딩과 36개 명령의 중복 없는 구성을 확인했습니다. 심플 모드 설정과 사용 기록의 저장·재로딩·2회 기준 집계·초기화도 별도 테스트했습니다. 미리보기 수치는 화면 검증용 예시이며 실제 도면 분석 결과가 아닙니다.
+- Release 빌드: 경고 0개, 오류 0개
+- 36개 명령의 중복 없는 Catalog 구성 확인
+- 명령행 이름 정규화 및 Catalog 연결 확인
+- 사용 기록 저장·재로딩·빈도 집계·초기화 확인
+- 심플 모드 설정 저장 및 재로딩 확인
+- 별도 WPF Preview에서 320px/370px 폭, 두 모드, Tab, 접이식 그룹과 Binding 확인
 
-`NETLOAD`, 실제 팔레트 도킹, 각 대화형 명령의 프롬프트 흐름, 임의 DWG에 대한 진단 결과는 실행 중인 AutoCAD UI에서 별도로 확인해야 합니다. AutoCAD 내부 실행을 수행하지 않은 항목을 성공한 것으로 간주하지 않습니다.
-
-대형 도면에서는 전체 Model Space 진단에 시간이 걸릴 수 있습니다. 전체 분석은 도면 점검 탭을 열 때, 다시 점검을 누를 때, 또는 도면 점검 탭을 보는 동안 AutoCAD 명령이 끝난 뒤 실행됩니다. 작업 도구 탭이나 숨겨진 팔레트에서는 전체 분석을 실행하지 않습니다.
-
-## 다음 확장 후보
-
-1. 사용자 지정 즐겨찾기와 도구 순서 저장
-2. Block·Layer·Text Style 사용량을 중첩 블록과 Paper Space까지 분석하는 상세 모드
-3. 안전 항목별 검토 화면과 실행 취소 가능한 선택적 Auto Fix
+실제 Palette 도킹, 대화형 명령 Prompt, DWG별 점검 결과는 AutoCAD 내부 환경과 도면 내용의 영향을 받으므로 `NETLOAD` 후 최종 확인이 필요합니다.
