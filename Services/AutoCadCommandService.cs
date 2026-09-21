@@ -228,12 +228,12 @@ public sealed class AutoCadCommandService
 
     private static void WriteError(Editor editor, string operation, System.Exception exception)
     {
-        editor.WriteMessage($"\n[CAD Productivity Palette] {operation} 처리 실패: {exception.Message}");
+        editor.WriteMessage($"\n[CAD 생산성 도구] {operation} 처리 실패: {exception.Message}");
     }
 
     private static void WriteNotice(Editor editor, string message)
     {
-        editor.WriteMessage($"\n[CAD Productivity Palette] {message}");
+        editor.WriteMessage($"\n[CAD 생산성 도구] {message}");
     }
 
     private static bool IsUsableId(ObjectId id, Database database)

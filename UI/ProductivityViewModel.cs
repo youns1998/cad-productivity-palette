@@ -400,24 +400,24 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
         {
             SelectionKind.Polyline =>
             [
-                new("Close / Open", string.Empty, "선택한 폴리라인을 닫거나 엽니다.", "toggle-polyline"),
-                new("Polyline Edit", "_.PEDIT", "PEDIT 실행 후 Join 등 필요한 옵션을 선택합니다.")
+                new("닫기 / 열기", string.Empty, "선택한 Polyline을 닫거나 엽니다.", "toggle-polyline"),
+                new("Polyline 편집", "_.PEDIT", "PEDIT 실행 후 Join 등 필요한 옵션을 선택합니다.")
             ],
             SelectionKind.Text =>
             [
-                new("Edit Text", "_.TEXTEDIT", "선택한 Text 또는 MText를 편집합니다.")
+                new("Text 편집", "_.TEXTEDIT", "선택한 Text 또는 MText를 편집합니다.")
             ],
             SelectionKind.Block =>
             [
-                new("Block Editor", string.Empty, "선택한 블록 정의를 편집합니다.", "edit-block")
+                new("Block 편집", string.Empty, "선택한 Block 정의를 편집합니다.", "edit-block")
             ],
             SelectionKind.Hatch =>
             [
-                new("Hatch Edit", "_.HATCHEDIT", "선택한 해치를 편집합니다.")
+                new("Hatch 편집", "_.HATCHEDIT", "선택한 Hatch를 편집합니다.")
             ],
             SelectionKind.Dimension =>
             [
-                new("Dim Edit", "_.DIMEDIT", "DIMEDIT 실행 후 편집 옵션과 대상을 지정합니다.")
+                new("Dimension 편집", "_.DIMEDIT", "DIMEDIT 실행 후 편집 옵션과 대상을 지정합니다.")
             ],
             _ => []
         };

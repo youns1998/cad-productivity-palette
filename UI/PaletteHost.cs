@@ -37,7 +37,7 @@ public static class PaletteHost
         }
 
         _view = new ProductivityPalette();
-        _paletteSet = new PaletteSet("CAD Productivity Palette", PaletteId)
+        _paletteSet = new PaletteSet("CAD 생산성 도구", PaletteId)
         {
             DockEnabled = DockSides.Left | DockSides.Right,
             MinimumSize = new Size(320, 420),
@@ -47,6 +47,6 @@ public static class PaletteHost
                     | PaletteSetStyles.ShowCloseButton
                     | PaletteSetStyles.ShowPropertiesMenu
         };
-        _paletteSet.AddVisual("Productivity", _view);
+        _paletteSet.AddVisual("작업 도구", _view);
     }
 }

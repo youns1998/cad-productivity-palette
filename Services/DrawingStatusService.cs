@@ -75,14 +75,14 @@ public sealed class DrawingStatusService
 
             List<DrawingIssue> issues =
             [
-                MakeIssue("열린 폴리라인", openPolylines, "Model Space의 열린 2D 폴리라인입니다. 닫아야 하는 객체인지 검토하세요."),
-                MakeIssue("ByLayer 외 색상", nonByLayer, "직접 지정한 색상 또는 ByBlock 색상입니다. 의도한 설정일 수 있습니다."),
-                MakeIssue("빈 문자", emptyText, "내용이 비어 있는 Text / MText 후보입니다."),
+                MakeIssue("열린 Polyline", openPolylines, "Model Space의 열린 2D Polyline입니다. 닫아야 하는 객체인지 검토하세요."),
+                MakeIssue("ByLayer가 아닌 색상", nonByLayer, "직접 지정한 색상 또는 ByBlock 색상입니다. 의도한 설정일 수 있습니다."),
+                MakeIssue("빈 Text", emptyText, "내용이 비어 있는 Text / MText 후보입니다."),
                 new DrawingIssue("Layer 0 사용", layerZeroObjects.Count,
-                    "Model Space의 Layer 0 객체입니다. 레이어 사용 정책에 따라 검토하세요.",
+                    "Model Space의 Layer 0 객체입니다. Layer 사용 정책에 따라 검토하세요.",
                     IssueSeverity.Information, [.. layerZeroObjects]),
-                MakeCountIssue("참조 없는 블록", unusedBlocks, "참조가 없는 일반 블록 정의 수입니다. 제거 여부는 PURGE에서 확인하세요."),
-                MakeCountIssue("잠긴 레이어", lockedLayers, "현재 잠겨 있는 레이어 수입니다. 정상적인 보호 설정일 수 있습니다.")
+                MakeCountIssue("미사용 Block", unusedBlocks, "참조되지 않는 일반 Block 정의 수입니다. 제거 여부는 Purge에서 확인하세요."),
+                MakeCountIssue("잠긴 Layer", lockedLayers, "현재 잠겨 있는 Layer 수입니다. 정상적인 보호 설정일 수 있습니다.")
             ];
 
             return new DrawingStatus
@@ -97,7 +97,7 @@ public sealed class DrawingStatusService
         }
         catch (System.Exception exception)
         {
-            document.Editor.WriteMessage($"\n[CAD Productivity Palette] 도면 점검 실패: {exception.Message}");
+            document.Editor.WriteMessage($"\n[CAD 생산성 도구] 도면 점검 실패: {exception.Message}");
             return DrawingStatus.Empty;
         }
     }

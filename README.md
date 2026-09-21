@@ -9,7 +9,7 @@ AutoCAD에서 반복적으로 쓰는 명령, 현재 선택 객체의 정보와 �
 - 자주 쓰는 작성·수정·주석·레이어·블록·측정 명령 실행
 - 현재 선택 객체의 종류와 핵심 속성 확인
 - 객체 종류에 맞는 편집 작업 바로 실행
-- 열린 폴리라인, 비 ByLayer 색상, 빈 텍스트 등 도면 상태 점검
+- 열린 Polyline, ByLayer가 아닌 색상, 빈 Text 등 도면 상태 점검
 - 문제가 있는 객체를 선택하고 해당 범위로 줌
 
 ## 환경
@@ -31,19 +31,20 @@ NuGet 패키지를 추가하지 않았습니다. Autodesk DLL은 저장소에 �
 - **기본 도구:** Line, Polyline, Move, Copy, Offset, Trim, MText, Dimension. 사용 기록이 없어도 항상 같은 위치에서 실행할 수 있습니다.
 - **추가 도구:** 나머지 28개 명령은 6개 접이식 그룹으로 제공하며 기본적으로 접혀 있습니다. 기본 도구와 중복 배치하지 않습니다.
 - **선택 객체 액션:** 객체 전용 편집만 강조합니다. 반복되던 Move/Copy/Offset/Match Props/Explode 버튼과 다중 선택 Erase 버튼을 컨텍스트에서 제거했습니다. 공통 편집은 Quick Tools에서 실행합니다.
-- **도면 점검 탭:** 검토 항목 3개를 우선 표시하고, 스타일·객체 수와 레이어·블록 참고 정보는 접어서 표시합니다.
-- **가독성:** 섹션·설명은 한국어, 익숙한 도구 이름은 영어로 표시합니다. 동작 가능한 항목에만 선택 + 줌 버튼이 나타나며, 0건 결과와 참고 정보도 흐려지지 않습니다.
+- **도면 점검 탭:** 검토 항목 3개를 우선 표시하고, 스타일·객체 수와 Layer·Block 참고 정보는 접어서 표시합니다.
+- **표기 원칙:** Offset·Trim·Polyline·Layer·ByLayer처럼 AutoCAD에서 그대로 사용하는 핵심 용어는 유지하고, 그룹·설명·상태는 한국어로 표시합니다. `ByLayer가 아닌 색상`, `미사용 Block`처럼 혼합 표기를 사용합니다.
+- **가독성:** 동작 가능한 항목에만 선택 + 줌 버튼이 나타나며, 0건 결과와 참고 정보도 흐려지지 않습니다.
 
 ### Quick Tools
 
 명령은 사용 목적별로 접을 수 있는 그룹에 배치했습니다. 버튼은 언어 독립적인 AutoCAD 명령 형식(`_.COMMAND`)을 사용합니다.
 
-- **DRAW:** LINE, PLINE, RECTANG, CIRCLE
-- **MODIFY:** OFFSET, TRIM, EXTEND, FILLET, CHAMFER, JOIN, COPY, MOVE, ROTATE, MIRROR, SCALE, STRETCH, ALIGN, MATCHPROP
-- **ANNOTATION:** HATCH, TEXT, MTEXT, DIM, DIMLINEAR, DIMALIGNED
-- **LAYER:** LAYISO, LAYUNISO, LAYOFF, LAYON
-- **BLOCK:** BLOCK, INSERT, BEDIT, EXPLODE
-- **UTILITY:** DIST, AREA, PURGE, ZOOM EXTENTS
+- **그리기:** LINE, PLINE, RECTANG, CIRCLE
+- **수정:** OFFSET, TRIM, EXTEND, FILLET, CHAMFER, JOIN, COPY, MOVE, ROTATE, MIRROR, SCALE, STRETCH, ALIGN, MATCHPROP
+- **주석:** HATCH, TEXT, MTEXT, DIM, DIMLINEAR, DIMALIGNED
+- **Layer:** LAYISO, LAYUNISO, LAYOFF, LAYON
+- **Block:** BLOCK, INSERT, BEDIT, EXPLODE
+- **측정 · 정리:** DIST, AREA, PURGE, ZOOM EXTENTS
 
 버튼은 명령을 시작하며, 이후 점 지정과 옵션 입력은 평소 AutoCAD 명령처럼 명령행과 도면 화면에서 계속합니다.
 
@@ -73,7 +74,7 @@ AutoCAD의 implied selection이 바뀌면 다음 정보를 갱신합니다.
 - Arc: 반지름, 길이
 - 다중 선택: 객체 수, 공통 레이어/종류
 
-Polyline의 Close/Open은 문서를 잠근 뒤 짧은 쓰기 트랜잭션으로 `Closed` 속성을 직접 변경합니다. `Polyline Edit`는 PEDIT를 시작하며 Join 등 옵션은 사용자가 지정합니다. 나머지 작업은 AutoCAD 기본 명령에 연결되어 있으며 명령별 프롬프트에 따라 대상이나 옵션을 추가로 지정할 수 있습니다.
+Polyline의 **닫기 / 열기**는 문서를 잠근 뒤 짧은 쓰기 트랜잭션으로 `Closed` 속성을 직접 변경합니다. **Polyline 편집**은 PEDIT를 시작하며 Join 등 옵션은 사용자가 지정합니다. 나머지 작업은 AutoCAD 기본 명령에 연결되어 있으며 명령별 프롬프트에 따라 대상이나 옵션을 추가로 지정할 수 있습니다.
 
 ### Drawing Status
 
@@ -85,12 +86,12 @@ Polyline의 Close/Open은 문서를 잠근 뒤 짧은 쓰기 트랜잭션으로 
 - ByLayer가 아닌 색상을 가진 객체
 - 빈 Text/MText
 - Layer 0에 놓인 객체
-- 참조 없는 일반 Block 정의
+- 미사용 일반 Block 정의
 - 잠긴 Layer
 
-열린 Polyline·ByLayer 외 색상·빈 문자를 검토 항목으로 표시합니다. 건수가 있는 항목의 **선택 + 줌** 버튼을 누르면 해당 객체를 선택하고 객체 extents에 맞춰 현재 뷰를 이동합니다. 0건은 `없음`으로 표시합니다. 열린 폴리라인이나 직접 지정한 색상이 곧 오류를 뜻하지는 않습니다.
+열린 Polyline·ByLayer가 아닌 색상·빈 Text를 검토 항목으로 표시합니다. 건수가 있는 항목의 **선택 + 줌** 버튼을 누르면 해당 객체를 선택하고 객체 extents에 맞춰 현재 뷰를 이동합니다. 0건은 `없음`으로 표시합니다. 열린 Polyline이나 직접 지정한 색상이 곧 오류를 뜻하지는 않습니다.
 
-Layer 0 사용·참조 없는 블록·잠긴 레이어는 **참고 정보**에 표시합니다. Layer 0 객체는 선택 + 줌을 지원하고 나머지는 숫자만 표시합니다. 기존 미사용 Layer/Text Style 집계는 Model Space만 읽어 오판할 수 있어 제거했습니다. 정의 정리는 AutoCAD PURGE에서 직접 검토합니다.
+Layer 0 사용·미사용 Block·잠긴 Layer는 **참고 정보**에 표시합니다. Layer 0 객체는 선택 + 줌을 지원하고 나머지는 숫자만 표시합니다. 기존 미사용 Layer/Text Style 집계는 Model Space만 읽어 오판할 수 있어 제거했습니다. 정의 정리는 AutoCAD Purge에서 직접 검토합니다.
 
 ## 안전성과 이벤트 처리
 
@@ -100,7 +101,7 @@ Layer 0 사용·참조 없는 블록·잠긴 레이어는 **참고 정보**에 �
 - 현재 보이는 탭만 갱신하고, 팔레트가 숨겨지면 선택·도면 분석을 중지합니다.
 - AutoCAD 명령 실행 중에는 데이터베이스 분석을 미루어 중첩 트랜잭션을 피합니다.
 - 삭제된 ObjectId와 다른 문서의 ObjectId는 조회·명령·직접 수정·줌 실행 전에 제외합니다.
-- 예외는 AutoCAD 명령행에 `[CAD Productivity Palette]` 접두어로 간단히 출력합니다.
+- 예외는 AutoCAD 명령행에 `[CAD 생산성 도구]` 접두어로 간단히 출력합니다.
 - 진단 기능은 도면을 자동 수정하지 않습니다.
 
 ## 빌드

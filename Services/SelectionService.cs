@@ -46,14 +46,14 @@ public sealed class SelectionService
             {
                 string commonLayer = entities.Select(entity => entity.Layer).Distinct(StringComparer.OrdinalIgnoreCase).Count() == 1
                     ? entities[0].Layer
-                    : "Varies";
+                    : "여러 값";
                 string commonType = entities.Select(GetTypeName).Distinct(StringComparer.Ordinal).Count() == 1
                     ? GetTypeName(entities[0])
-                    : "Mixed objects";
+                    : "여러 종류";
 
                 return new SelectionInfo
                 {
-                    Heading = $"{entities.Count} Objects",
+                    Heading = $"{entities.Count}개 객체",
                     Description = commonType,
                     Kind = SelectionKind.Multiple,
                     ObjectIds = ids,
@@ -68,14 +68,14 @@ public sealed class SelectionService
             List<PropertyItem> properties =
             [
                 new("Layer", entity.Layer),
-                new("Color", GetColor(entity))
+                new("색상", GetColor(entity))
             ];
 
             SelectionKind kind = AddSpecificProperties(entity, transaction, properties);
             return new SelectionInfo
             {
                 Heading = GetTypeName(entity),
-                Description = "이동·복사 등은 아래 도구에서 실행하세요.",
+                Description = "Move·Copy 등은 아래 도구에서 실행하세요.",
                 Kind = kind,
                 ObjectIds = ids,
                 Properties = properties
@@ -83,7 +83,7 @@ public sealed class SelectionService
         }
         catch (System.Exception exception)
         {
-            document.Editor.WriteMessage($"\n[CAD Productivity Palette] 선택 정보 읽기 실패: {exception.Message}");
+            document.Editor.WriteMessage($"\n[CAD 생산성 도구] 선택 정보 읽기 실패: {exception.Message}");
             return SelectionInfo.Empty;
         }
     }
@@ -96,52 +96,52 @@ public sealed class SelectionService
         switch (entity)
         {
             case Polyline polyline:
-                properties.Add(new("Length", Format(polyline.Length)));
-                properties.Add(new("Area", TryArea(polyline)));
-                properties.Add(new("State", polyline.Closed ? "Closed" : "Open"));
+                properties.Add(new("길이", Format(polyline.Length)));
+                properties.Add(new("면적", TryArea(polyline)));
+                properties.Add(new("상태", polyline.Closed ? "닫힘" : "열림"));
                 return SelectionKind.Polyline;
 
             case Line line:
-                properties.Add(new("Length", Format(line.Length)));
+                properties.Add(new("길이", Format(line.Length)));
                 return SelectionKind.Line;
 
             case DBText text:
-                properties.Add(new("Content", Collapse(text.TextString)));
-                properties.Add(new("Height", Format(text.Height)));
+                properties.Add(new("내용", Collapse(text.TextString)));
+                properties.Add(new("높이", Format(text.Height)));
                 properties.Add(new("Text Style", GetSymbolName(text.TextStyleId, transaction)));
                 return SelectionKind.Text;
 
             case MText mtext:
-                properties.Add(new("Content", Collapse(mtext.Text)));
-                properties.Add(new("Height", Format(mtext.TextHeight)));
+                properties.Add(new("내용", Collapse(mtext.Text)));
+                properties.Add(new("높이", Format(mtext.TextHeight)));
                 properties.Add(new("Text Style", GetSymbolName(mtext.TextStyleId, transaction)));
                 return SelectionKind.Text;
 
             case BlockReference block:
                 ObjectId definitionId = block.IsDynamicBlock ? block.DynamicBlockTableRecord : block.BlockTableRecord;
-                properties.Add(new("Block Name", GetSymbolName(definitionId, transaction)));
-                properties.Add(new("Attributes", block.AttributeCollection.Count > 0 ? "Yes" : "No"));
+                properties.Add(new("Block 이름", GetSymbolName(definitionId, transaction)));
+                properties.Add(new("속성", block.AttributeCollection.Count > 0 ? "있음" : "없음"));
                 return SelectionKind.Block;
 
             case Hatch hatch:
-                properties.Add(new("Pattern", hatch.PatternName));
-                properties.Add(new("Scale", Format(hatch.PatternScale)));
+                properties.Add(new("Hatch Pattern", hatch.PatternName));
+                properties.Add(new("축척", Format(hatch.PatternScale)));
                 return SelectionKind.Hatch;
 
             case Dimension dimension:
-                properties.Add(new("Dim Style", GetSymbolName(dimension.DimensionStyle, transaction)));
-                properties.Add(new("Measurement", Format(dimension.Measurement)));
+                properties.Add(new("Dimension Style", GetSymbolName(dimension.DimensionStyle, transaction)));
+                properties.Add(new("측정값", Format(dimension.Measurement)));
                 return SelectionKind.Dimension;
 
             case Circle circle:
-                properties.Add(new("Radius", Format(circle.Radius)));
-                properties.Add(new("Diameter", Format(circle.Radius * 2.0)));
-                properties.Add(new("Area", Format(Math.PI * circle.Radius * circle.Radius)));
+                properties.Add(new("반지름", Format(circle.Radius)));
+                properties.Add(new("지름", Format(circle.Radius * 2.0)));
+                properties.Add(new("면적", Format(Math.PI * circle.Radius * circle.Radius)));
                 return SelectionKind.Circle;
 
             case Arc arc:
-                properties.Add(new("Radius", Format(arc.Radius)));
-                properties.Add(new("Length", Format(arc.GetDistanceAtParameter(arc.EndParam))));
+                properties.Add(new("반지름", Format(arc.Radius)));
+                properties.Add(new("길이", Format(arc.GetDistanceAtParameter(arc.EndParam))));
                 return SelectionKind.Arc;
 
             default:
@@ -155,7 +155,7 @@ public sealed class SelectionService
         Line => "Line",
         DBText => "Text",
         MText => "MText",
-        BlockReference => "Block Reference",
+        BlockReference => "Block 참조",
         Hatch => "Hatch",
         Dimension => "Dimension",
         Circle => "Circle",
@@ -208,8 +208,8 @@ public sealed class SelectionService
             .Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries));
         return collapsed.Length switch
         {
-            0 => "(empty)",
-            > 64 => collapsed[..61] + "...",
+            0 => "(비어 있음)",
+            > 64 => collapsed[..61] + "…",
             _ => collapsed
         };
     }

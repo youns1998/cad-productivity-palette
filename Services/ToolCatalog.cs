@@ -25,59 +25,59 @@ public static class ToolCatalog
     {
         return
         [
-            new("DRAW",
+            new("그리기",
             [
-                new("Line", "_.LINE", "Create line segments."),
-                new("Polyline", "_.PLINE", "Create a 2D polyline."),
-                new("Rectangle", "_.RECTANG", "Create a rectangular polyline."),
-                new("Circle", "_.CIRCLE", "Create a circle.")
+                new("Line", "_.LINE", "선분을 작성합니다."),
+                new("Polyline", "_.PLINE", "2D Polyline을 작성합니다."),
+                new("Rectangle", "_.RECTANG", "직사각형 Polyline을 작성합니다."),
+                new("Circle", "_.CIRCLE", "원을 작성합니다.")
             ]),
-            new("MODIFY",
+            new("수정",
             [
-                new("Move", "_.MOVE", "Move selected objects."),
-                new("Copy", "_.COPY", "Copy selected objects."),
-                new("Offset", "_.OFFSET", "Create parallel or concentric copies."),
-                new("Trim", "_.TRIM", "Trim objects to boundaries."),
-                new("Extend", "_.EXTEND", "Extend objects to boundaries."),
-                new("Fillet", "_.FILLET", "Round and join object edges."),
-                new("Chamfer", "_.CHAMFER", "Bevel and join object edges."),
-                new("Join", "_.JOIN", "Join compatible objects."),
-                new("Rotate", "_.ROTATE", "Rotate selected objects."),
-                new("Mirror", "_.MIRROR", "Create a mirrored copy."),
-                new("Scale", "_.SCALE", "Scale selected objects."),
-                new("Stretch", "_.STRETCH", "Stretch crossed geometry."),
-                new("Align", "_.ALIGN", "Align objects in 2D or 3D."),
-                new("Match Props", "_.MATCHPROP", "Copy properties between objects.")
+                new("Move", "_.MOVE", "선택한 객체를 이동합니다."),
+                new("Copy", "_.COPY", "선택한 객체를 복사합니다."),
+                new("Offset", "_.OFFSET", "평행하거나 동심인 객체를 작성합니다."),
+                new("Trim", "_.TRIM", "경계를 기준으로 객체를 자릅니다."),
+                new("Extend", "_.EXTEND", "경계까지 객체를 연장합니다."),
+                new("Fillet", "_.FILLET", "객체 모서리를 둥글게 연결합니다."),
+                new("Chamfer", "_.CHAMFER", "객체 모서리를 모따기하여 연결합니다."),
+                new("Join", "_.JOIN", "연결 가능한 객체를 하나로 결합합니다."),
+                new("Rotate", "_.ROTATE", "선택한 객체를 회전합니다."),
+                new("Mirror", "_.MIRROR", "대칭 복사본을 작성합니다."),
+                new("Scale", "_.SCALE", "선택한 객체의 크기를 변경합니다."),
+                new("Stretch", "_.STRETCH", "교차 선택한 형상을 늘이거나 줄입니다."),
+                new("Align", "_.ALIGN", "객체를 2D 또는 3D에서 정렬합니다."),
+                new("Match Props", "_.MATCHPROP", "다른 객체의 속성을 복사해 적용합니다.")
             ]),
-            new("ANNOTATION",
+            new("주석",
             [
-                new("Hatch", "_.HATCH", "Create hatch or fill."),
-                new("Text", "_.TEXT", "Create single-line text."),
-                new("MText", "_.MTEXT", "Create multiline text."),
-                new("Dimension", "_.DIM", "Create a context-aware dimension."),
-                new("Linear Dim", "_.DIMLINEAR", "Create a linear dimension."),
-                new("Aligned Dim", "_.DIMALIGNED", "Create an aligned dimension.")
+                new("Hatch", "_.HATCH", "Hatch 또는 채우기를 작성합니다."),
+                new("Text", "_.TEXT", "한 줄 Text를 작성합니다."),
+                new("MText", "_.MTEXT", "여러 줄 Text를 작성합니다."),
+                new("Dimension", "_.DIM", "객체에 맞는 치수를 작성합니다."),
+                new("Linear Dim", "_.DIMLINEAR", "수평 또는 수직 치수를 작성합니다."),
+                new("Aligned Dim", "_.DIMALIGNED", "객체에 정렬된 치수를 작성합니다.")
             ]),
-            new("LAYER",
+            new("Layer",
             [
-                new("Isolate", "_.LAYISO", "Isolate selected object layers."),
-                new("Unisolate", "_.LAYUNISO", "Restore isolated layers."),
-                new("Layer Off", "_.LAYOFF", "Turn off a selected object layer."),
-                new("All Layers On", "_.LAYON", "Turn on all drawing layers.")
+                new("Layer Isolate", "_.LAYISO", "선택한 객체의 Layer만 표시합니다."),
+                new("Layer 복원", "_.LAYUNISO", "분리했던 Layer 표시 상태를 복원합니다."),
+                new("Layer 끄기", "_.LAYOFF", "선택한 객체의 Layer를 끕니다."),
+                new("모든 Layer 켜기", "_.LAYON", "도면의 모든 Layer를 켭니다.")
             ]),
-            new("BLOCK",
+            new("Block",
             [
-                new("Create Block", "_.BLOCK", "Create a block definition."),
-                new("Insert", "_.INSERT", "Insert a block reference."),
-                new("Block Editor", "_.BEDIT", "Open a block definition in Block Editor."),
-                new("Explode", "_.EXPLODE", "Explode a compound object.")
+                new("Block 생성", "_.BLOCK", "새 Block 정의를 작성합니다."),
+                new("Insert", "_.INSERT", "Block 참조를 삽입합니다."),
+                new("Block 편집", "_.BEDIT", "Block Editor에서 Block 정의를 편집합니다."),
+                new("Explode", "_.EXPLODE", "결합된 객체를 구성 요소로 분해합니다.")
             ]),
-            new("UTILITY",
+            new("측정 · 정리",
             [
-                new("Distance", "_.DIST", "Measure distance and angle."),
-                new("Area", "_.AREA", "Measure area and perimeter."),
-                new("Purge", "_.PURGE", "Open AutoCAD Purge for unused definitions."),
-                new("Zoom Extents", "_.ZOOM\n_Extents", "Zoom to all drawing extents.")
+                new("Distance", "_.DIST", "거리와 각도를 측정합니다."),
+                new("Area", "_.AREA", "면적과 둘레를 측정합니다."),
+                new("Purge", "_.PURGE", "미사용 정의를 확인하는 Purge 창을 엽니다."),
+                new("Zoom Extents", "_.ZOOM\n_Extents", "도면 전체 범위로 Zoom합니다.")
             ])
         ];
     }

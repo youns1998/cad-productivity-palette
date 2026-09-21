@@ -279,7 +279,7 @@
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
-                    <TextBlock Text="CAD PRODUCTIVITY" FontSize="15" FontWeight="SemiBold" />
+                    <TextBlock Text="CAD 생산성 도구" FontSize="15" FontWeight="SemiBold" />
                     <TextBlock Text="선택한 객체부터, 필요한 도구까지" Foreground="{StaticResource MutedBrush}"
                                FontSize="11" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" />
                 </StackPanel>
@@ -427,7 +427,7 @@
                                         <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
                                     </Grid.ColumnDefinitions>
                                     <StackPanel VerticalAlignment="Center">
-                                        <TextBlock Text="MODEL SPACE" FontWeight="SemiBold" />
+                                        <TextBlock Text="Model Space" FontWeight="SemiBold" />
                                         <TextBlock Text="{Binding LastRefresh}" Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,4,0,0" />
                                     </StackPanel>
                                     <Button Grid.Column="1" Content="다시 점검" Command="{Binding RefreshCommand}"
@@ -445,7 +445,7 @@
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="90" /><ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="현재 레이어" Foreground="{StaticResource MutedBrush}" />
+                                    <TextBlock Text="현재 Layer" Foreground="{StaticResource MutedBrush}" />
                                     <TextBlock Grid.Column="1" Text="{Binding CurrentLayer}" ToolTip="{Binding CurrentLayer}" TextTrimming="CharacterEllipsis" />
                                 </Grid>
                                 <Expander Header="스타일 · 객체 수" Margin="0,8,0,0">
@@ -456,15 +456,15 @@
                                         <Grid.RowDefinitions>
                                             <RowDefinition Height="26" /><RowDefinition Height="26" /><RowDefinition Height="26" />
                                         </Grid.RowDefinitions>
-                                        <TextBlock Text="문자 스타일" Foreground="{StaticResource MutedBrush}" />
+                                        <TextBlock Text="Text Style" Foreground="{StaticResource MutedBrush}" />
                                         <TextBlock Grid.Column="1" Text="{Binding CurrentTextStyle}" ToolTip="{Binding CurrentTextStyle}" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Grid.Row="1" Text="치수 스타일" Foreground="{StaticResource MutedBrush}" />
+                                        <TextBlock Grid.Row="1" Text="Dimension Style" Foreground="{StaticResource MutedBrush}" />
                                         <TextBlock Grid.Row="1" Grid.Column="1" Text="{Binding CurrentDimStyle}" ToolTip="{Binding CurrentDimStyle}" TextTrimming="CharacterEllipsis" />
-                                        <TextBlock Grid.Row="2" Text="모델 객체" Foreground="{StaticResource MutedBrush}" />
+                                        <TextBlock Grid.Row="2" Text="Model Space 객체" Foreground="{StaticResource MutedBrush}" />
                                         <TextBlock Grid.Row="2" Grid.Column="1" Text="{Binding ObjectCount}" />
                                     </Grid>
                                 </Expander>
-                                <Expander Header="참고 정보 · 레이어 / 블록">
+                                <Expander Header="참고 정보 · Layer / Block">
                                     <StackPanel>
                                         <TextBlock Text="정상적인 설정일 수 있으며 자동 수정하지 않습니다."
                                                    Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" FontSize="11" Margin="0,0,0,8" />
