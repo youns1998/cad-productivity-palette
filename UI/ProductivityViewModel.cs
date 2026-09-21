@@ -22,6 +22,7 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     private readonly DrawingStatusService _drawingStatusService = new();
     private readonly AutoCadCommandService _commandService = new();
     private readonly ToolUsageService _toolUsageService = new();
+    private readonly UserSettingsService _userSettingsService = new();
     private readonly DispatcherTimer _refreshTimer;
     private Document? _subscribedDocument;
     private bool _refreshSelectionPending;
@@ -36,11 +37,13 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     private ObjectId[] _selectionIds = [];
     private SelectionKind _selectionKind;
     private int _selectedTabIndex;
+    private bool _isSimpleMode;
     private bool _isActive;
     private bool _disposed;
 
     public ProductivityViewModel()
     {
+        _isSimpleMode = _userSettingsService.IsSimpleMode;
         QuickToolGroups = ToolCatalog.AdditionalGroups;
         ExecuteToolCommand = new RelayCommand<ToolAction>(ExecuteTool);
         ExecuteUsageToolCommand = new RelayCommand<ToolUsageItem>(ExecuteUsageTool);
@@ -73,6 +76,7 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     public ObservableCollection<DrawingIssue> DrawingNotes { get; } = [];
     public bool HasRecentTools => RecentTools.Count > 0;
     public bool HasFrequentTools => FrequentTools.Count > 0;
+    public bool IsFullMode => !IsSimpleMode;
     public string ReviewSummary => DrawingIssues.Count == 0 ? "아직 점검 결과가 없습니다."
         : DrawingIssues.Any(issue => issue.Count > 0)
             ? $"{DrawingIssues.Count(issue => issue.Count > 0)}개 항목 검토 · 오류 확정이 아닙니다."
@@ -135,6 +139,25 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
             if (SetField(ref _selectedTabIndex, value) && _isActive)
             {
                 ScheduleRefresh(selection: value == 0, status: value == 1);
+            }
+        }
+    }
+
+    public bool IsSimpleMode
+    {
+        get => _isSimpleMode;
+        set
+        {
+            if (!SetField(ref _isSimpleMode, value))
+            {
+                return;
+            }
+
+            _userSettingsService.SetSimpleMode(value);
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(IsFullMode)));
+            if (value && SelectedTabIndex != 0)
+            {
+                SelectedTabIndex = 0;
             }
         }
     }

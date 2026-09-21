@@ -57,6 +57,44 @@
                 </Setter.Value>
             </Setter>
         </Style>
+        <Style x:Key="ModeToggle" TargetType="ToggleButton">
+            <Setter Property="Width" Value="54" />
+            <Setter Property="Height" Value="24" />
+            <Setter Property="Foreground" Value="#FFFFFF" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="ToggleButton">
+                        <Border x:Name="ToggleTrack" Background="#4A535E" BorderBrush="#6A7480"
+                                BorderThickness="1" CornerRadius="12">
+                            <Grid>
+                                <TextBlock x:Name="ToggleLabel" Text="OFF" FontSize="9" FontWeight="SemiBold"
+                                           HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,7,0" />
+                                <Ellipse x:Name="ToggleKnob" Width="18" Height="18" Fill="#E8EAED"
+                                         HorizontalAlignment="Left" Margin="2,0,0,0" />
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter TargetName="ToggleTrack" Property="Background" Value="#2F6F54" />
+                                <Setter TargetName="ToggleTrack" Property="BorderBrush" Value="#63A987" />
+                                <Setter TargetName="ToggleLabel" Property="Text" Value="ON" />
+                                <Setter TargetName="ToggleLabel" Property="HorizontalAlignment" Value="Left" />
+                                <Setter TargetName="ToggleLabel" Property="Margin" Value="7,0,0,0" />
+                                <Setter TargetName="ToggleKnob" Property="HorizontalAlignment" Value="Right" />
+                                <Setter TargetName="ToggleKnob" Property="Margin" Value="0,0,2,0" />
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="ToggleTrack" Property="BorderBrush" Value="#B8D5F2" />
+                            </Trigger>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="ToggleTrack" Property="BorderBrush" Value="#FFFFFF" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
         <Style TargetType="Expander">
             <Setter Property="Foreground" Value="#E8EAED" />
             <Setter Property="IsExpanded" Value="False" />
@@ -234,11 +272,25 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" /><RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Border Background="#191D23" Padding="14,12">
-            <StackPanel>
-                <TextBlock Text="CAD PRODUCTIVITY" FontSize="15" FontWeight="SemiBold" />
-                <TextBlock Text="선택한 객체부터, 필요한 도구까지" Foreground="{StaticResource MutedBrush}" FontSize="11" Margin="0,4,0,0" />
-            </StackPanel>
+        <Border Background="#191D23" Padding="14,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" MinWidth="150" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel VerticalAlignment="Center" Margin="0,0,10,0">
+                    <TextBlock Text="CAD PRODUCTIVITY" FontSize="15" FontWeight="SemiBold" />
+                    <TextBlock Text="선택한 객체부터, 필요한 도구까지" Foreground="{StaticResource MutedBrush}"
+                               FontSize="11" Margin="0,4,0,0" TextTrimming="CharacterEllipsis" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" HorizontalAlignment="Right">
+                    <TextBlock Text="심플 모드" Foreground="{StaticResource MutedBrush}" FontSize="10"
+                               HorizontalAlignment="Center" Margin="0,0,0,3" />
+                    <ToggleButton x:Name="SimpleModeToggle" Style="{StaticResource ModeToggle}"
+                                  IsChecked="{Binding IsSimpleMode, Mode=TwoWay}"
+                                  ToolTip="ON: 선택 정보와 기본 도구만 표시 / OFF: 전체 기능 표시" />
+                </StackPanel>
+            </Grid>
         </Border>
         <TabControl Grid.Row="1" Background="Transparent" BorderThickness="0" Padding="0"
                     SelectedIndex="{Binding SelectedTabIndex, Mode=TwoWay}">
@@ -277,7 +329,8 @@
                                 </ItemsControl>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource Card}">
+                        <Border x:Name="SmartToolsCard" Style="{StaticResource Card}"
+                                Visibility="{Binding IsFullMode, Converter={StaticResource VisibleWhenTrue}}">
                             <StackPanel>
                                 <Grid Margin="0,0,0,8">
                                     <Grid.ColumnDefinitions>
@@ -338,7 +391,8 @@
                                               ItemTemplate="{StaticResource QuickToolTemplate}" Margin="-2,0" />
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource Card}">
+                        <Border x:Name="AdditionalToolsCard" Style="{StaticResource Card}"
+                                Visibility="{Binding IsFullMode, Converter={StaticResource VisibleWhenTrue}}">
                             <StackPanel>
                                 <TextBlock Text="추가 도구" Style="{StaticResource SectionTitle}" Margin="0,0,0,2" />
                                 <ItemsControl ItemsSource="{Binding QuickToolGroups}">
@@ -362,7 +416,8 @@
                     </StackPanel>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="도면 점검">
+            <TabItem x:Name="DrawingStatusTab" Header="도면 점검"
+                     Visibility="{Binding IsFullMode, Converter={StaticResource VisibleWhenTrue}}">
                 <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                     <StackPanel Margin="0,10,0,4">
                         <Border Style="{StaticResource Card}">
