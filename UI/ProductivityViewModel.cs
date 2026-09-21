@@ -15,13 +15,10 @@ namespace CadProductivityPalette.UI;
 
 public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
 {
-    private static readonly IReadOnlyList<ToolAction> AllCatalogTools =
-        ToolCatalog.Groups.SelectMany(group => group.Tools).ToArray();
-
     private readonly SelectionService _selectionService = new();
     private readonly DrawingStatusService _drawingStatusService = new();
     private readonly AutoCadCommandService _commandService = new();
-    private readonly ToolUsageService _toolUsageService = new();
+    private readonly ToolUsageTracker _toolUsageTracker = ToolUsageTracker.Instance;
     private readonly UserSettingsService _userSettingsService = new();
     private readonly DispatcherTimer _refreshTimer;
     private Document? _subscribedDocument;
@@ -44,13 +41,14 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     public ProductivityViewModel()
     {
         _isSimpleMode = _userSettingsService.IsSimpleMode;
-        QuickToolGroups = ToolCatalog.AdditionalGroups;
+        QuickToolGroups = ToolCatalog.Groups;
         ExecuteToolCommand = new RelayCommand<ToolAction>(ExecuteTool);
         ExecuteUsageToolCommand = new RelayCommand<ToolUsageItem>(ExecuteUsageTool);
         ExecuteContextCommand = new RelayCommand<ToolAction>(ExecuteContextAction);
         SelectIssueCommand = new RelayCommand<DrawingIssue>(SelectIssue, issue => issue.CanSelect);
         RefreshCommand = new RelayCommand(RefreshVisible);
-        ClearUsageCommand = new RelayCommand(ClearUsage, () => _toolUsageService.HasUsage);
+        ClearUsageCommand = new RelayCommand(ClearUsage, () => _toolUsageTracker.HasUsage);
+        _toolUsageTracker.UsageChanged += OnToolUsageChanged;
         RefreshUsageTools();
 
         _refreshTimer = new DispatcherTimer(DispatcherPriority.Background)
@@ -198,16 +196,13 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
         _refreshTimer.Tick -= OnRefreshTimerTick;
         AcApplication.DocumentManager.DocumentActivated -= OnDocumentActivated;
         AcApplication.DocumentManager.DocumentToBeDestroyed -= OnDocumentToBeDestroyed;
+        _toolUsageTracker.UsageChanged -= OnToolUsageChanged;
         DetachDocument();
     }
 
     private void ExecuteTool(ToolAction tool)
     {
-        if (_commandService.Execute(tool.CommandText))
-        {
-            _toolUsageService.Record(tool);
-            RefreshUsageTools();
-        }
+        _commandService.Execute(tool.CommandText);
     }
 
     private void ExecuteUsageTool(ToolUsageItem item)
@@ -217,17 +212,21 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
 
     private void ClearUsage()
     {
-        _toolUsageService.Clear();
-        RefreshUsageTools();
+        _toolUsageTracker.Clear();
     }
 
     private void RefreshUsageTools()
     {
-        Replace(RecentTools, _toolUsageService.GetRecent(AllCatalogTools));
-        Replace(FrequentTools, _toolUsageService.GetFrequent(AllCatalogTools));
+        Replace(RecentTools, _toolUsageTracker.GetRecent());
+        Replace(FrequentTools, _toolUsageTracker.GetFrequent());
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasRecentTools)));
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(nameof(HasFrequentTools)));
         ClearUsageCommand.RaiseCanExecuteChanged();
+    }
+
+    private void OnToolUsageChanged(object? sender, EventArgs eventArgs)
+    {
+        RefreshUsageTools();
     }
 
     private void ExecuteContextAction(ToolAction action)

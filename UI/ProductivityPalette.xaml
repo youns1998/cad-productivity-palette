@@ -288,7 +288,7 @@
                                HorizontalAlignment="Center" Margin="0,0,0,3" />
                     <ToggleButton x:Name="SimpleModeToggle" Style="{StaticResource ModeToggle}"
                                   IsChecked="{Binding IsSimpleMode, Mode=TwoWay}"
-                                  ToolTip="ON: 선택 정보와 기본 도구만 표시 / OFF: 전체 기능 표시" />
+                                  ToolTip="ON: 선택 정보, 스마트 도구와 기본 도구 표시 / OFF: 전체 기능 표시" />
                 </StackPanel>
             </Grid>
         </Border>
@@ -329,8 +329,7 @@
                                 </ItemsControl>
                             </StackPanel>
                         </Border>
-                        <Border x:Name="SmartToolsCard" Style="{StaticResource Card}"
-                                Visibility="{Binding IsFullMode, Converter={StaticResource VisibleWhenTrue}}">
+                        <Border x:Name="SmartToolsCard" Style="{StaticResource Card}">
                             <StackPanel>
                                 <Grid Margin="0,0,0,8">
                                     <Grid.ColumnDefinitions>
@@ -384,7 +383,8 @@
                                 </TabControl>
                             </StackPanel>
                         </Border>
-                        <Border Style="{StaticResource Card}">
+                        <Border x:Name="BasicToolsCard" Style="{StaticResource Card}"
+                                Visibility="{Binding IsSimpleMode, Converter={StaticResource VisibleWhenTrue}}">
                             <StackPanel>
                                 <TextBlock Text="기본 도구" Style="{StaticResource SectionTitle}" />
                                 <ItemsControl ItemsSource="{Binding EssentialTools}" ItemsPanel="{StaticResource TwoColumns}"
@@ -394,7 +394,7 @@
                         <Border x:Name="AdditionalToolsCard" Style="{StaticResource Card}"
                                 Visibility="{Binding IsFullMode, Converter={StaticResource VisibleWhenTrue}}">
                             <StackPanel>
-                                <TextBlock Text="추가 도구" Style="{StaticResource SectionTitle}" Margin="0,0,0,2" />
+                                <TextBlock Text="모든 도구" Style="{StaticResource SectionTitle}" Margin="0,0,0,2" />
                                 <ItemsControl ItemsSource="{Binding QuickToolGroups}">
                                     <ItemsControl.ItemTemplate>
                                         <DataTemplate>

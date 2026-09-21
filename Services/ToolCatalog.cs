@@ -2,7 +2,6 @@ using CadProductivityPalette.Models;
 
 namespace CadProductivityPalette.Services;
 
-// One catalog: a tool appears either in the always-visible essentials or in a group.
 public static class ToolCatalog
 {
     private static readonly HashSet<string> EssentialCommands =
@@ -10,16 +9,36 @@ public static class ToolCatalog
 
     public static IReadOnlyList<ToolGroup> Groups { get; } = CreateQuickToolGroups();
 
+    public static IReadOnlyList<ToolAction> AllTools { get; } =
+        Groups.SelectMany(group => group.Tools).ToArray();
+
+    private static readonly IReadOnlyDictionary<string, ToolAction> ToolsByGlobalCommandName =
+        AllTools.ToDictionary(
+            tool => NormalizeCommandName(tool.CommandText),
+            StringComparer.OrdinalIgnoreCase);
+
     public static IReadOnlyList<ToolAction> EssentialTools { get; } =
-        Groups.SelectMany(group => group.Tools)
+        AllTools
             .Where(tool => EssentialCommands.Contains(tool.CommandText))
             .ToArray();
 
-    public static IReadOnlyList<ToolGroup> AdditionalGroups { get; } =
-        Groups.Select(group => new ToolGroup(group.Name,
-                group.Tools.Where(tool => !EssentialCommands.Contains(tool.CommandText)).ToArray()))
-            .Where(group => group.Tools.Count > 0)
-            .ToArray();
+    public static ToolAction? FindByGlobalCommandName(string? commandName)
+    {
+        if (string.IsNullOrWhiteSpace(commandName))
+        {
+            return null;
+        }
+
+        return ToolsByGlobalCommandName.TryGetValue(NormalizeCommandName(commandName), out ToolAction? tool)
+            ? tool
+            : null;
+    }
+
+    private static string NormalizeCommandName(string commandText)
+    {
+        string firstToken = commandText.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries)[0];
+        return firstToken.TrimStart('.', '_', '\'', '-').ToUpperInvariant();
+    }
 
     private static IReadOnlyList<ToolGroup> CreateQuickToolGroups()
     {
