@@ -18,7 +18,7 @@ try {
     $dotnetCommand = Get-Command $Dotnet
     $env:DOTNET_ROOT = Split-Path $dotnetCommand.Source
     $env:DOTNET_ROOT_X64 = $env:DOTNET_ROOT
-    $dll = (Join-Path $root 'bin/Release/net10.0-windows/CadProductivityPalette.dll').Replace('\','/')
+    $dll = (Join-Path $root 'src/CadProductivityPalette/bin/Release/net10.0-windows/CadProductivityPalette.dll').Replace('\','/')
     $dllFolder = (Split-Path $dll).Replace('\','/')
     $report = (Join-Path $work 'review.json').Replace('\','/')
     $csv = (Join-Path $work 'review.csv').Replace('\','/')

@@ -6,10 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="../../Core/*.cs" Link="Core/%(Filename)%(Extension)" />
-    <Compile Include="../../Models/ToolModels.cs" Link="ToolModels.cs" />
-    <Compile Include="../../Services/ToolCatalog.cs" Link="ToolCatalog.cs" />
-    <Compile Include="../../Services/ToolUsageService.cs" Link="ToolUsageService.cs" />
-    <Compile Include="../../Services/UserSettingsService.cs" Link="UserSettingsService.cs" />
+    <Compile Include="../../src/CadProductivityPalette/Core/*.cs" Link="Core/%(Filename)%(Extension)" />
+    <Compile Include="../../src/CadProductivityPalette/Models/ToolModels.cs" Link="ToolModels.cs" />
+    <Compile Include="../../src/CadProductivityPalette/Services/ToolCatalog.cs" Link="ToolCatalog.cs" />
+    <Compile Include="../../src/CadProductivityPalette/Services/ToolUsageService.cs" Link="ToolUsageService.cs" />
+    <Compile Include="../../src/CadProductivityPalette/Services/UserSettingsService.cs" Link="UserSettingsService.cs" />
   </ItemGroup>
 </Project>

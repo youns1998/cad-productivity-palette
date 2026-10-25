@@ -32,6 +32,5 @@
     </Reference>
   </ItemGroup>
 
-  <ItemGroup><Compile Remove="tools/**/*.cs;tests/**/*.cs" /></ItemGroup>
   <Target Name="CheckAutoCADReferences" BeforeTargets="ResolveReferences" Condition="!Exists('$(AutoCADDir)/AcMgd.dll')"><Error Text="AutoCAD API DLL이 없습니다. -p:AutoCADDir=설치경로 를 지정하세요." /></Target>
 </Project>

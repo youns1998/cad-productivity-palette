@@ -2,6 +2,8 @@
 
 검증일: 2026-10-26 / Windows x64
 
+`src/` 이동과 점검 모델·규칙·저장 파일 분리 후 빌드, 독립 검사 22개, 실제 AutoCAD 엔진 검사를 다시 통과했습니다. DLL 위치는 `src/CadProductivityPalette/bin/Release/net10.0-windows/`입니다.
+
 | 항목 | 결과 |
 |---|---|
 | SDK | .NET 10.0.402 |
