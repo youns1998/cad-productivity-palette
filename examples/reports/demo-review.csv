@@ -1,0 +1,6 @@
+﻿도면명,도면단위,객체수,규칙,항목,구분,후보수,Handle,설명
+"DEMO-2026-SHEET-001.dwg","0","5","OPEN_POLYLINE","열린 Polyline","검토","1","A1","열린 2D Polyline입니다. 의도한 객체인지 확인하세요."
+"DEMO-2026-SHEET-001.dwg","0","5","DIRECT_COLOR","ByLayer가 아닌 색상","검토","1","C1","객체별 색상 또는 ByBlock 설정입니다. 자동 수정하지 않습니다."
+"DEMO-2026-SHEET-001.dwg","0","5","EMPTY_TEXT","빈 Text","검토","1","B1","공백 또는 빈 문자열인 Text / MText 후보입니다."
+"DEMO-2026-SHEET-001.dwg","0","5","LAYER_ZERO","Layer 0 사용","참고","1","C1","Layer 0 사용은 정상일 수 있습니다. 프로젝트 레이어 정책에 따라 판단하세요."
+"DEMO-2026-SHEET-001.dwg","0","5","UNSPECIFIED_UNITS","도면 단위 미지정","검토","1","DRAWING","INSUNITS=0입니다. 제출 도면의 단위와 축척을 확인하세요."

@@ -9,7 +9,7 @@ using Autodesk.AutoCAD.Runtime;
 using CadProductivityPalette.Models;
 using CadProductivityPalette.Services;
 using CadProductivityPalette.Utils;
-using AcApplication = Autodesk.AutoCAD.ApplicationServices.Application;
+using AcApplication = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace CadProductivityPalette.UI;
 
@@ -47,6 +47,7 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
         ExecuteContextCommand = new RelayCommand<ToolAction>(ExecuteContextAction);
         SelectIssueCommand = new RelayCommand<DrawingIssue>(SelectIssue, issue => issue.CanSelect);
         RefreshCommand = new RelayCommand(RefreshVisible);
+        ExportReportCommand = new RelayCommand(() => _commandService.Execute("CADREVIEWEXPORT"));
         ClearUsageCommand = new RelayCommand(ClearUsage, () => _toolUsageTracker.HasUsage);
         _toolUsageTracker.UsageChanged += OnToolUsageChanged;
         RefreshUsageTools();
@@ -78,13 +79,14 @@ public sealed class ProductivityViewModel : INotifyPropertyChanged, IDisposable
     public string ReviewSummary => DrawingIssues.Count == 0 ? "아직 점검 결과가 없습니다."
         : DrawingIssues.Any(issue => issue.Count > 0)
             ? $"{DrawingIssues.Count(issue => issue.Count > 0)}개 항목 검토 · 오류 확정이 아닙니다."
-            : "검토 대상 없음 · 아래 3개 항목 기준";
+            : "검토 대상 없음 · 표시한 항목 기준";
 
     public RelayCommand<ToolAction> ExecuteToolCommand { get; }
     public RelayCommand<ToolUsageItem> ExecuteUsageToolCommand { get; }
     public RelayCommand<ToolAction> ExecuteContextCommand { get; }
     public RelayCommand<DrawingIssue> SelectIssueCommand { get; }
     public RelayCommand RefreshCommand { get; }
+    public RelayCommand ExportReportCommand { get; }
     public RelayCommand ClearUsageCommand { get; }
 
     public string SelectionHeading

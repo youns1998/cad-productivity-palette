@@ -28,6 +28,7 @@ public sealed record DrawingIssue(
 
 public sealed class DrawingStatus
 {
+    public CadProductivityPalette.Core.ReviewReport? Report { get; init; }
     public static DrawingStatus Empty { get; } = new();
 
     public string CurrentLayer { get; init; } = "—";

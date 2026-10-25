@@ -1,0 +1,40 @@
+{
+  "drawingName": "DEMO-2026-SHEET-001.dwg",
+  "units": 0,
+  "entities": [
+    {
+      "handle": "A1",
+      "type": "LWPOLYLINE",
+      "layer": "A-WALL",
+      "byLayer": true,
+      "closed": false
+    },
+    {
+      "handle": "A2",
+      "type": "LWPOLYLINE",
+      "layer": "A-WALL",
+      "byLayer": true,
+      "closed": true
+    },
+    {
+      "handle": "B1",
+      "type": "TEXT",
+      "layer": "A-TEXT",
+      "byLayer": true,
+      "text": " "
+    },
+    {
+      "handle": "B2",
+      "type": "TEXT",
+      "layer": "A-TEXT",
+      "byLayer": true,
+      "text": "가상 검토도면"
+    },
+    {
+      "handle": "C1",
+      "type": "LINE",
+      "layer": "0",
+      "byLayer": false
+    }
+  ]
+}

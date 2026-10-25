@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ApplicationPackage SchemaVersion="1.0" AutodeskProduct="AutoCAD" Name="CAD Productivity Palette" AppVersion="1.0.0" Description="Drawing review and productivity tools" Author="youns1998" ProductCode="{E4A272E3-2164-4DA2-A46C-B3948D85D601}" UpgradeCode="{870078A7-53CE-44E4-9C3D-60CC0A3DAD08}">
+  <CompanyDetails Name="youns1998" Url="https://github.com/youns1998/cad-productivity-palette" />
+  <Components>
+    <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R26.0" SeriesMax="R26.0" />
+    <ComponentEntry AppName="CadProductivityPalette" ModuleName="./Contents/Windows/CadProductivityPalette.dll" AppDescription="Drawing review and productivity tools" LoadOnAutoCADStartup="False" LoadOnCommandInvocation="True">
+      <Commands GroupName="CADPRODUCTIVITY">
+        <Command Global="CADTOOLS" Local="CADTOOLS" />
+        <Command Global="CADREVIEWEXPORT" Local="CADREVIEWEXPORT" />
+        <Command Global="CADREVIEWBATCH" Local="CADREVIEWBATCH" />
+      </Commands>
+    </ComponentEntry>
+  </Components>
+</ApplicationPackage>

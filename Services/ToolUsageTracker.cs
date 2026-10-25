@@ -1,7 +1,7 @@
 using Autodesk.AutoCAD.ApplicationServices;
 using Autodesk.AutoCAD.EditorInput;
 using CadProductivityPalette.Models;
-using AcApplication = Autodesk.AutoCAD.ApplicationServices.Application;
+using AcApplication = Autodesk.AutoCAD.ApplicationServices.Core.Application;
 
 namespace CadProductivityPalette.Services;
 

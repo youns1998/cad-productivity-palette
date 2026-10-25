@@ -1,7 +1,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <AutoCADVersion Condition="'$(AutoCADVersion)' == ''">2027</AutoCADVersion>
+    <TargetFramework Condition="'$(AutoCADVersion)' == '2026'">net8.0-windows</TargetFramework>
+    <TargetFramework Condition="'$(AutoCADVersion)' != '2026'">net10.0-windows</TargetFramework>
+    <AutoCADDir Condition="'$(AutoCADDir)' == ''">C:\Program Files\Autodesk\AutoCAD $(AutoCADVersion)</AutoCADDir>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <UseWPF>true</UseWPF>
@@ -16,17 +19,19 @@
 
   <ItemGroup>
     <Reference Include="AcMgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2026\AcMgd.dll</HintPath>
+      <HintPath>$(AutoCADDir)\AcMgd.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="AcDbMgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2026\AcDbMgd.dll</HintPath>
+      <HintPath>$(AutoCADDir)\AcDbMgd.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="AcCoreMgd">
-      <HintPath>C:\Program Files\Autodesk\AutoCAD 2026\AcCoreMgd.dll</HintPath>
+      <HintPath>$(AutoCADDir)\AcCoreMgd.dll</HintPath>
       <Private>false</Private>
     </Reference>
   </ItemGroup>
 
+  <ItemGroup><Compile Remove="tools/**/*.cs;tests/**/*.cs" /></ItemGroup>
+  <Target Name="CheckAutoCADReferences" BeforeTargets="ResolveReferences" Condition="!Exists('$(AutoCADDir)/AcMgd.dll')"><Error Text="AutoCAD API DLL이 없습니다. -p:AutoCADDir=설치경로 를 지정하세요." /></Target>
 </Project>

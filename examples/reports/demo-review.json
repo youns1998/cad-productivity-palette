@@ -1,0 +1,59 @@
+{
+  "DrawingName": "DEMO-2026-SHEET-001.dwg",
+  "Units": 0,
+  "EntityCount": 5,
+  "GeneratedAt": "2026-10-25T15:30:27.0116247+00:00",
+  "Findings": [
+    {
+      "RuleId": "OPEN_POLYLINE",
+      "Name": "열린 Polyline",
+      "Severity": "검토",
+      "Description": "열린 2D Polyline입니다. 의도한 객체인지 확인하세요.",
+      "Handles": [
+        "A1"
+      ],
+      "Count": 1
+    },
+    {
+      "RuleId": "DIRECT_COLOR",
+      "Name": "ByLayer가 아닌 색상",
+      "Severity": "검토",
+      "Description": "객체별 색상 또는 ByBlock 설정입니다. 자동 수정하지 않습니다.",
+      "Handles": [
+        "C1"
+      ],
+      "Count": 1
+    },
+    {
+      "RuleId": "EMPTY_TEXT",
+      "Name": "빈 Text",
+      "Severity": "검토",
+      "Description": "공백 또는 빈 문자열인 Text / MText 후보입니다.",
+      "Handles": [
+        "B1"
+      ],
+      "Count": 1
+    },
+    {
+      "RuleId": "LAYER_ZERO",
+      "Name": "Layer 0 사용",
+      "Severity": "참고",
+      "Description": "Layer 0 사용은 정상일 수 있습니다. 프로젝트 레이어 정책에 따라 판단하세요.",
+      "Handles": [
+        "C1"
+      ],
+      "Count": 1
+    },
+    {
+      "RuleId": "UNSPECIFIED_UNITS",
+      "Name": "도면 단위 미지정",
+      "Severity": "검토",
+      "Description": "INSUNITS=0입니다. 제출 도면의 단위와 축척을 확인하세요.",
+      "Handles": [
+        "DRAWING"
+      ],
+      "Count": 1
+    }
+  ],
+  "CandidateCount": 4
+}

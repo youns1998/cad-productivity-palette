@@ -430,8 +430,7 @@
                                         <TextBlock Text="Model Space" FontWeight="SemiBold" />
                                         <TextBlock Text="{Binding LastRefresh}" Foreground="{StaticResource MutedBrush}" FontSize="10" Margin="0,4,0,0" />
                                     </StackPanel>
-                                    <Button Grid.Column="1" Content="다시 점검" Command="{Binding RefreshCommand}"
-                                            Style="{StaticResource ToolButton}" ToolTip="선택 정보와 도면 점검 결과를 갱신합니다." />
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal"><Button Content="다시 점검" Command="{Binding RefreshCommand}" Style="{StaticResource ToolButton}" /><Button Content="보고서 저장" Command="{Binding ExportReportCommand}" Style="{StaticResource ToolButton}" Margin="6,0,0,0" ToolTip="CSV 또는 JSON 점검 보고서를 저장합니다." /></StackPanel>
                                 </Grid>
                                 <TextBlock Text="{Binding ReviewSummary}" Foreground="#B5CCE5" FontSize="11" TextWrapping="Wrap" Margin="0,0,0,12" />
                                 <ItemsControl ItemsSource="{Binding DrawingIssues}" ItemTemplate="{StaticResource IssueTemplate}" />

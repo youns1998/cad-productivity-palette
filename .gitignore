@@ -20,3 +20,10 @@ AcCoreMgd.dll
 *.sv$
 *.dwl
 *.dwl2
+
+# Nested tool outputs and local QA
+**/bin/
+**/obj/
+.codex-preview/
+.artifacts/
+*.log
